@@ -35,6 +35,7 @@ npm run preview
 | `/work/` | Portfolio (replaces `/index.php/portfolio/xposure-portfolio/`) |
 | `/work/<slug>/` | Project pages: Ezzeddine Plus annual Iftar 2024, Horeca Exhibition 2024 |
 | `/contact/` | Enquiry form, contact routes and FAQ (replaces `/index.php/contact/`) |
+| `/plan/` | Event brief builder: four guided steps (occasion, services, details, send). The header CTA, the first slide and the phone action bar point here |
 | `/careers/` | Join the team: roles and application form |
 | `/guides/`, `/guides/<slug>/` | Practical guides (English only) |
 | `/privacy/` | Privacy notice (English only) |
@@ -72,6 +73,32 @@ Each feature below is built and tested, but anything that needs real business in
 | Analytics | `VITE_GTM_ID` | Set: a consent banner appears and GTM loads only after "Accept". |
 | Arabic in Google | `arabicReviewed` in `site.ts` | `true`: Arabic pages become indexable, join the sitemap and get `hreflang` links. Until then they are reachable from the language switch but `noindex`. |
 | New guide | Add an entry to `client/content/guides.ts` | Always. |
+| Key figures with count-up ("Xposure in numbers") | `client/content/stats.ts` | An entry has `approved: true`. Only provable figures. |
+| Campaign links | Add `?utm_source=…&utm_campaign=…` to any shared link (see `client/attribution.ts`) | Always. The enquiry message ends with "Found Xposure via: …". Nothing is stored. |
+
+### Lead-generation features (14 November 2026)
+
+- **Event brief builder (`/plan/`)**: four short steps instead of one long form. Real radio buttons and checkboxes underneath, focus moves to each new step's heading, Enter continues, answers survive Back, and a review list with "Change" links appears before sending. The result is the same front-end-only draft as the enquiry form (WhatsApp or email, in English for the team). After sending, a "one last step: press send" panel offers to reopen the draft or switch channel. Links can preselect answers: `/plan/?service=photo-marketing&occasion=exhibition` (occasions: `corporate`, `exhibition`, `activation`, `celebration`, `other`).
+- **Sticky header**: stays at the top, tucks away while reading downwards and returns on scroll up (never while keyboard focus is inside it). On the home page it turns solid once the slider has scrolled away.
+- **Phone action bar**: "Plan your event", the chat assistant, call and WhatsApp, slides up after the first screen and steps aside while a form is on screen (`data-hide-dock`). Not shown on `/plan/` or `/careers/`. On a service page it opens the builder with that service ticked.
+- **Plan teaser band** on the home and services pages; **services marquee** under the home slider; **reading progress bar** on guides.
+- **Analytics**: `brief_step` (with `step` 2–4) is pushed as visitors move through the builder, and `generate_lead` with `location: brief_builder` when they send. Map them to a GA4 funnel in GTM.
+
+### Chat assistant (15 November 2026)
+
+An "Ask us" assistant (bottom corner on every page, and a chat button in the phone action bar) answers visitors' questions and hands them over to the team.
+
+- **No server, no AI service, no cost.** `client/chat/engine.ts` recognises the question from keywords in English, Arabic, Lebanese Arabizi ("addesh el se3er") and some French, and answers only from the site's own content: services, FAQs (found by their `id` in `content/faqs.ts`), the process, projects and contact details. Arabic questions get Arabic answers on either language's pages.
+- **It never invents.** No prices, dates or availability. Those questions get "the team will confirm" plus WhatsApp, call and the `/plan/` builder (with the service and occasion preselected). WhatsApp links carry the visitor's exact question, so the team sees it straight away. After two questions in a row it can't place, it stops guessing and offers the team.
+- **Privacy.** What visitors type never leaves their browser. The conversation is kept in `sessionStorage` for the tab, so it survives moving between pages, and is cleared on "Start a new conversation" or when the tab closes. The privacy notice says so. Analytics (`chat_open`, `chat_question`) receive only the topic (e.g. `pricing`), never the words.
+- **Performance.** Only the launcher is in the page; the chat window (about 7 KB JS + 2 KB CSS gzipped) is downloaded the first time a visitor points at, focuses or opens it.
+- **Accessibility.** A dialog with a labelled live conversation log, real buttons for suggestions, Escape to close with focus returned, focus kept inside on phones (where it is full screen), 16px input (no iPhone zoom), and no animation under "reduce motion". A one-time greeting bubble appears after 12 seconds on larger screens and can be dismissed.
+- The floating WhatsApp button was replaced by the assistant. WhatsApp and call are in the chat header, in every hand-off answer, and in the phone action bar.
+- **AI later (optional).** Unrecognised questions are the place to plug in an AI model. That needs a small serverless function (Netlify/Cloudflare) to keep the API key secret, a usage-billed API account, and instructions that keep the model to the same approved facts.
+
+### Animation
+
+All motion lives in `client/motion.css` (system and existing sections) and `client/features.css` (new features), with small hooks in `client/motion.ts`. CSS and native browser APIs only (no animation library). Content is in the prerendered HTML and visible without JavaScript; above-the-fold headings and photos are never faded in (fast LCP); only transform and opacity are animated in all but two tiny elements; nothing loops for more than 5 seconds (the marquee and the guide progress bar follow the visitor's own scrolling, using CSS scroll-driven animations where supported); and every animation stops under "reduce motion". Change the `:root` timing values at the top of `motion.css` to make the whole site calmer or livelier.
 
 Text for both languages lives in `client/i18n/strings.ts`; Arabic service, project and FAQ content in `client/content/ar.ts`. The Arabic was translated from the English without adding facts and **must be reviewed by a native speaker** before `arabicReviewed` is set.
 
@@ -115,7 +142,7 @@ The API offers `GET /api/health`, `POST /api/inquiries` and `POST /api/applicati
 
 ## Analytics
 
-With `VITE_GTM_ID` set, `client/components/ConsentBanner.tsx` asks for consent and `client/analytics.ts` loads GTM only after the visitor accepts ("Cookie settings" in the footer reopens the choice). Events pushed to `dataLayer`: `generate_lead` (enquiry form, email draft, job application), `contact_click` (WhatsApp, phone, email, with location) and `file_download`. Map them to GA4 conversions in GTM. Update `/privacy/` if any other tool is added.
+With `VITE_GTM_ID` set, `client/components/ConsentBanner.tsx` asks for consent and `client/analytics.ts` loads GTM only after the visitor accepts ("Cookie settings" in the footer reopens the choice). Events pushed to `dataLayer`: `generate_lead` (enquiry form, brief builder, email draft, job application), `brief_step` (brief builder progress), `chat_open` and `chat_question` (chat assistant; topic only), `contact_click` (WhatsApp, phone, email, with location, including `action_dock` and `chat`) and `file_download`. Map them to GA4 conversions in GTM. Update `/privacy/` if any other tool is added.
 
 ## Content and branding
 

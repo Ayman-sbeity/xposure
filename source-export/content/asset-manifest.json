@@ -1,0 +1,532 @@
+[
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/thegem/logos/logo_332ccd1d313eabcd7c89e52533a42a01_3x.png",
+    "alt": "xposure",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/00-logo_332ccd1d313eabcd7c89e52533a42a01_3x.png",
+    "width": 492,
+    "height": 492,
+    "optimized": "public/assets/00-logo_332ccd1d313eabcd7c89e52533a42a01_3x.webp",
+    "bytes": 25584
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/thegem/logos/logo_7718de51822ef3d79faa5fde04646ee5_3x.png",
+    "alt": "xposure",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/01-logo_7718de51822ef3d79faa5fde04646ee5_3x.png",
+    "width": 396,
+    "height": 396,
+    "optimized": "public/assets/01-logo_7718de51822ef3d79faa5fde04646ee5_3x.webp",
+    "bytes": 19167
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/06/Xposure-2000x1000-zoomed-out-optimized-scaled.webp",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/02-Xposure-2000x1000-zoomed-out-optimized-scaled.webp",
+    "width": 2560,
+    "height": 1280,
+    "optimized": "public/assets/02-Xposure-2000x1000-zoomed-out-optimized-scaled.webp",
+    "bytes": 352612
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/03/MicrosoftTeams-image-362.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/03-MicrosoftTeams-image-362.jpg",
+    "width": 1000,
+    "height": 1000,
+    "optimized": "public/assets/03-MicrosoftTeams-image-362.webp",
+    "bytes": 158834
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/06/Xposure-Girls-banner-2000x1000-ratio-optimized-scaled.webp",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/04-Xposure-Girls-banner-2000x1000-ratio-optimized-scaled.webp",
+    "width": 2560,
+    "height": 1280,
+    "optimized": "public/assets/04-Xposure-Girls-banner-2000x1000-ratio-optimized-scaled.webp",
+    "bytes": 116956
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/06/Xposure-3-Banner-Optimized-scaled.webp",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/05-Xposure-3-Banner-Optimized-scaled.webp",
+    "width": 2560,
+    "height": 1280,
+    "optimized": "public/assets/05-Xposure-3-Banner-Optimized-scaled.webp",
+    "bytes": 59772
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2025/04/xposure-iftar-768x576.jpg",
+    "alt": "EPI Holding Iftar",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/06-xposure-iftar-768x576.jpg",
+    "width": 768,
+    "height": 576,
+    "optimized": "public/assets/06-xposure-iftar-768x576.webp",
+    "bytes": 80466
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2025/04/xposure-hostesses-768x360.jpg",
+    "alt": "Promoters and Hostesses",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/07-xposure-hostesses-768x360.jpg",
+    "width": 768,
+    "height": 360,
+    "optimized": "public/assets/07-xposure-hostesses-768x360.webp",
+    "bytes": 44362
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2025/04/Xposure-banner-updated-cover-photo-google-768x360.jpg",
+    "alt": "Brand Ambassador In Lebanon",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/08-Xposure-banner-updated-cover-photo-google-768x360.jpg",
+    "width": 768,
+    "height": 360,
+    "optimized": "public/assets/08-Xposure-banner-updated-cover-photo-google-768x360.webp",
+    "bytes": 25054
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/xposure-horeca-mareline--scaled-thegem-portfolio-masonry.jpg",
+    "alt": "Xposure\u2019s Success At Horeca Exhibition 2024",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/09-xposure-horeca-mareline--scaled-thegem-portfolio-masonry.jpg",
+    "width": 754,
+    "height": 501,
+    "optimized": "public/assets/09-xposure-horeca-mareline--scaled-thegem-portfolio-masonry.webp",
+    "bytes": 56349
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/2560-1700-portfolio-ezz-thegem-portfolio-masonry.jpg",
+    "alt": "Ezzeddine Plus Iftar",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/10-2560-1700-portfolio-ezz-thegem-portfolio-masonry.jpg",
+    "width": 754,
+    "height": 501,
+    "optimized": "public/assets/10-2560-1700-portfolio-ezz-thegem-portfolio-masonry.webp",
+    "bytes": 39826
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2022/03/11-1-1-thegem-portfolio-masonry.jpg",
+    "alt": "NUSO",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/11-11-1-1-thegem-portfolio-masonry.jpg",
+    "width": 754,
+    "height": 754,
+    "optimized": "public/assets/11-11-1-1-thegem-portfolio-masonry.webp",
+    "bytes": 89297
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/11-3.webp",
+    "alt": "11-3",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/12-11-3.webp",
+    "width": 1000,
+    "height": 1000,
+    "optimized": "public/assets/12-11-3.webp",
+    "bytes": 56966
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/03/MicrosoftTeams-image-332.jpg",
+    "alt": "MicrosoftTeams-image (332)",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/13-MicrosoftTeams-image-332.jpg",
+    "width": 1600,
+    "height": 1600,
+    "optimized": "public/assets/13-MicrosoftTeams-image-332.webp",
+    "bytes": 319116
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/03/young-businesswoman-writing-clipboard-with-pen-1.jpg",
+    "alt": "young-businesswoman-writing-clipboard-with-pen (1)",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/14-young-businesswoman-writing-clipboard-with-pen-1.jpg",
+    "width": 1600,
+    "height": 1600,
+    "optimized": "public/assets/14-young-businesswoman-writing-clipboard-with-pen-1.webp",
+    "bytes": 180813
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/03/brunette-businesswoman-showing-tablet-scaled.jpg",
+    "alt": "brunette-businesswoman-showing-tablet",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/15-brunette-businesswoman-showing-tablet-scaled.jpg",
+    "width": 1600,
+    "height": 1600,
+    "optimized": "public/assets/15-brunette-businesswoman-showing-tablet-scaled.webp",
+    "bytes": 226625
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/02/xposure-new-logo-256x256.png",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/16-xposure-new-logo-256x256.png",
+    "width": 256,
+    "height": 256,
+    "optimized": "public/assets/16-xposure-new-logo-256x256.webp",
+    "bytes": 5013
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/02/2-thegem-post-thumb-large.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/17-2-thegem-post-thumb-large.jpg",
+    "width": 256,
+    "height": 256,
+    "optimized": "public/assets/17-2-thegem-post-thumb-large.webp",
+    "bytes": 9292
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/02/xposure-short-logo.png",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/18-xposure-short-logo.png",
+    "width": 1600,
+    "height": 1600,
+    "optimized": "public/assets/18-xposure-short-logo.webp",
+    "bytes": 86541
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/thegem/logos/logo_332ccd1d313eabcd7c89e52533a42a01_1x.png",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/19-logo_332ccd1d313eabcd7c89e52533a42a01_1x.png",
+    "width": 164,
+    "height": 164,
+    "optimized": "public/assets/19-logo_332ccd1d313eabcd7c89e52533a42a01_1x.webp",
+    "bytes": 5476
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/thegem/logos/logo_332ccd1d313eabcd7c89e52533a42a01_2x.png",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/20-logo_332ccd1d313eabcd7c89e52533a42a01_2x.png",
+    "width": 328,
+    "height": 328,
+    "optimized": "public/assets/20-logo_332ccd1d313eabcd7c89e52533a42a01_2x.webp",
+    "bytes": 14755
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/thegem/logos/logo_7718de51822ef3d79faa5fde04646ee5_1x.png",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/21-logo_7718de51822ef3d79faa5fde04646ee5_1x.png",
+    "width": 132,
+    "height": 132,
+    "optimized": "public/assets/21-logo_7718de51822ef3d79faa5fde04646ee5_1x.webp",
+    "bytes": 4199
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/thegem/logos/logo_7718de51822ef3d79faa5fde04646ee5_2x.png",
+    "alt": "",
+    "page": "https://xposurelb.com/",
+    "file": "source-export/images/22-logo_7718de51822ef3d79faa5fde04646ee5_2x.png",
+    "width": 264,
+    "height": 264,
+    "optimized": "public/assets/22-logo_7718de51822ef3d79faa5fde04646ee5_2x.webp",
+    "bytes": 10641
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/xposure-about-us-1-300x166.jpg",
+    "alt": "hostess company in lebanon",
+    "page": "https://xposurelb.com/index.php/xposure-hostess-company-in-lebanon/",
+    "file": "source-export/images/23-xposure-about-us-1-300x166.jpg",
+    "width": 300,
+    "height": 166,
+    "optimized": "public/assets/23-xposure-about-us-1-300x166.webp",
+    "bytes": 15946
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/xposure-about-us-2-300x166.jpg",
+    "alt": "Host and hostess in lebanon",
+    "page": "https://xposurelb.com/index.php/xposure-hostess-company-in-lebanon/",
+    "file": "source-export/images/24-xposure-about-us-2-300x166.jpg",
+    "width": 300,
+    "height": 166,
+    "optimized": "public/assets/24-xposure-about-us-2-300x166.webp",
+    "bytes": 6718
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/elementor/thumbs/sky-1-01-r52a5ei3k9r53wfeckoh7v2mx6pwo2u37yirg0xwo0.png",
+    "alt": "Brand Name",
+    "page": "https://xposurelb.com/index.php/xposure-hostess-company-in-lebanon/",
+    "file": "source-export/images/25-sky-1-01-r52a5ei3k9r53wfeckoh7v2mx6pwo2u37yirg0xwo0.png",
+    "width": 400,
+    "height": 400,
+    "optimized": "public/assets/25-sky-1-01-r52a5ei3k9r53wfeckoh7v2mx6pwo2u37yirg0xwo0.webp",
+    "bytes": 17827
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/elementor/thumbs/cool-01-01-r52a4r04teuz1ndj5siszj042jxqbn8ssq7mg3wqzk.png",
+    "alt": "Brand Name",
+    "page": "https://xposurelb.com/index.php/xposure-hostess-company-in-lebanon/",
+    "file": "source-export/images/26-cool-01-01-r52a4r04teuz1ndj5siszj042jxqbn8ssq7mg3wqzk.png",
+    "width": 400,
+    "height": 400,
+    "optimized": "public/assets/26-cool-01-01-r52a4r04teuz1ndj5siszj042jxqbn8ssq7mg3wqzk.webp",
+    "bytes": 10071
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/elementor/thumbs/nuso-01-r52a44g09e03b0aatirrbop1tb0x6wr8pmjyxgu74w.png",
+    "alt": "Brand Name",
+    "page": "https://xposurelb.com/index.php/xposure-hostess-company-in-lebanon/",
+    "file": "source-export/images/27-nuso-01-r52a44g09e03b0aatirrbop1tb0x6wr8pmjyxgu74w.png",
+    "width": 400,
+    "height": 400,
+    "optimized": "public/assets/27-nuso-01-r52a44g09e03b0aatirrbop1tb0x6wr8pmjyxgu74w.webp",
+    "bytes": 6332
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/elementor/thumbs/ezzeddine-logo-new-r52a7s1eu708gez5h3nj0rhkz90b4j9nvpvy47f2xs.png",
+    "alt": "Brand Name",
+    "page": "https://xposurelb.com/index.php/xposure-hostess-company-in-lebanon/",
+    "file": "source-export/images/28-ezzeddine-logo-new-r52a7s1eu708gez5h3nj0rhkz90b4j9nvpvy47f2xs.png",
+    "width": 400,
+    "height": 400,
+    "optimized": "public/assets/28-ezzeddine-logo-new-r52a7s1eu708gez5h3nj0rhkz90b4j9nvpvy47f2xs.webp",
+    "bytes": 14859
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/exposure-1023x1536.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/xposure-hostess-company-in-lebanon/",
+    "file": "source-export/images/29-exposure-1023x1536.jpg",
+    "width": 1023,
+    "height": 1536,
+    "optimized": "public/assets/29-exposure-1023x1536.webp",
+    "bytes": 48907
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2019/01/4.png",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/xposure-hostess-company-in-lebanon/",
+    "file": "source-export/images/30-4.png",
+    "width": 1600,
+    "height": 1373,
+    "optimized": "public/assets/30-4.webp",
+    "bytes": 11990
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2019/01/mr.-mahdi-thegem-testimonial.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/xposure-services/",
+    "file": "source-export/images/31-mr.-mahdi-thegem-testimonial.jpg",
+    "width": 400,
+    "height": 400,
+    "optimized": "public/assets/31-mr.-mahdi-thegem-testimonial.webp",
+    "bytes": 20853
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2019/01/MicrosoftTeams-image-246-thegem-testimonial.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/xposure-services/",
+    "file": "source-export/images/32-MicrosoftTeams-image-246-thegem-testimonial.jpg",
+    "width": 400,
+    "height": 400,
+    "optimized": "public/assets/32-MicrosoftTeams-image-246-thegem-testimonial.webp",
+    "bytes": 12718
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/02/coolplay-1320x-699-thegem-product-justified-square-xl.jpg",
+    "alt": "COOLPLAY",
+    "page": "https://xposurelb.com/index.php/portfolio/xposure-portfolio/",
+    "file": "source-export/images/33-coolplay-1320x-699-thegem-product-justified-square-xl.jpg",
+    "width": 700,
+    "height": 699,
+    "optimized": "public/assets/33-coolplay-1320x-699-thegem-product-justified-square-xl.webp",
+    "bytes": 49336
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/02/reception-218x300.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/contact/",
+    "file": "source-export/images/34-reception-218x300.jpg",
+    "width": 218,
+    "height": 300,
+    "optimized": "public/assets/34-reception-218x300.webp",
+    "bytes": 12239
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/02/blocks-image-07.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/contact/",
+    "file": "source-export/images/35-blocks-image-07.jpg",
+    "width": 1600,
+    "height": 751,
+    "optimized": "public/assets/35-blocks-image-07.webp",
+    "bytes": 25436
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1B2A7035-2048x1150.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/",
+    "file": "source-export/images/36-1B2A7035-2048x1150.jpg",
+    "width": 1600,
+    "height": 898,
+    "optimized": "public/assets/36-1B2A7035-2048x1150.webp",
+    "bytes": 135461
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1B2A7055-2048x1150.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/",
+    "file": "source-export/images/37-1B2A7055-2048x1150.jpg",
+    "width": 1600,
+    "height": 898,
+    "optimized": "public/assets/37-1B2A7055-2048x1150.webp",
+    "bytes": 153386
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1B2A7076-2048x1150.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/",
+    "file": "source-export/images/38-1B2A7076-2048x1150.jpg",
+    "width": 1600,
+    "height": 898,
+    "optimized": "public/assets/38-1B2A7076-2048x1150.webp",
+    "bytes": 137702
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1B2A7552-2048x1150.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/",
+    "file": "source-export/images/39-1B2A7552-2048x1150.jpg",
+    "width": 1600,
+    "height": 898,
+    "optimized": "public/assets/39-1B2A7552-2048x1150.webp",
+    "bytes": 130880
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1B2A7035-scaled.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/",
+    "file": "source-export/images/40-1B2A7035-scaled.jpg",
+    "width": 1600,
+    "height": 898,
+    "optimized": "public/assets/40-1B2A7035-scaled.webp",
+    "bytes": 138043
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1B2A7055-scaled.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/",
+    "file": "source-export/images/41-1B2A7055-scaled.jpg",
+    "width": 1600,
+    "height": 898,
+    "optimized": "public/assets/41-1B2A7055-scaled.webp",
+    "bytes": 155767
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1B2A7076-scaled.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/",
+    "file": "source-export/images/42-1B2A7076-scaled.jpg",
+    "width": 1600,
+    "height": 898,
+    "optimized": "public/assets/42-1B2A7076-scaled.webp",
+    "bytes": 140106
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1B2A7552-scaled.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/",
+    "file": "source-export/images/43-1B2A7552-scaled.jpg",
+    "width": 1600,
+    "height": 898,
+    "optimized": "public/assets/43-1B2A7552-scaled.webp",
+    "bytes": 135149
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/C58A0437-2048x1365.jpg",
+    "alt": "",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/44-C58A0437-2048x1365.jpg",
+    "width": 1600,
+    "height": 1066,
+    "optimized": "public/assets/44-C58A0437-2048x1365.webp",
+    "bytes": 138399
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/MicrosoftTeams-image-365-150x150.jpg",
+    "alt": "MicrosoftTeams-image (365)",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/45-MicrosoftTeams-image-365-150x150.jpg",
+    "width": 150,
+    "height": 150,
+    "optimized": "public/assets/45-MicrosoftTeams-image-365-150x150.webp",
+    "bytes": 4206
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/MicrosoftTeams-image-367-150x150.jpg",
+    "alt": "MicrosoftTeams-image (367)",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/46-MicrosoftTeams-image-367-150x150.jpg",
+    "width": 150,
+    "height": 150,
+    "optimized": "public/assets/46-MicrosoftTeams-image-367-150x150.webp",
+    "bytes": 4874
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/C58A0462-150x150.jpg",
+    "alt": "C58A0462",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/47-C58A0462-150x150.jpg",
+    "width": 150,
+    "height": 150,
+    "optimized": "public/assets/47-C58A0462-150x150.webp",
+    "bytes": 6662
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/C58A0442-150x150.jpg",
+    "alt": "C58A0442",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/48-C58A0442-150x150.jpg",
+    "width": 150,
+    "height": 150,
+    "optimized": "public/assets/48-C58A0442-150x150.webp",
+    "bytes": 4221
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/C58A0441-150x150.jpg",
+    "alt": "C58A0441",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/49-C58A0441-150x150.jpg",
+    "width": 150,
+    "height": 150,
+    "optimized": "public/assets/49-C58A0441-150x150.webp",
+    "bytes": 4414
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1000-1000-banner-exposure-girls-2-150x150.jpg",
+    "alt": "1000-1000 banner exposure girls 2",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/50-1000-1000-banner-exposure-girls-2-150x150.jpg",
+    "width": 150,
+    "height": 150,
+    "optimized": "public/assets/50-1000-1000-banner-exposure-girls-2-150x150.webp",
+    "bytes": 6212
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1000-1000-sale-banner-exposure-1-150x150.jpg",
+    "alt": "1000-1000 sale banner exposure",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/51-1000-1000-sale-banner-exposure-1-150x150.jpg",
+    "width": 150,
+    "height": 150,
+    "optimized": "public/assets/51-1000-1000-sale-banner-exposure-1-150x150.webp",
+    "bytes": 8749
+  },
+  {
+    "url": "https://xposurelb.com/wp-content/uploads/2024/04/1000-1000-banner-exposure-booklet-2-150x150.jpg",
+    "alt": "1000-1000 banner exposure booklet 2",
+    "page": "https://xposurelb.com/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/",
+    "file": "source-export/images/52-1000-1000-banner-exposure-booklet-2-150x150.jpg",
+    "width": 150,
+    "height": 150,
+    "optimized": "public/assets/52-1000-1000-banner-exposure-booklet-2-150x150.webp",
+    "bytes": 3575
+  }
+]

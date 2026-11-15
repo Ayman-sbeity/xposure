@@ -1,0 +1,4 @@
+# Preview build: indexing is disabled.
+# Build with VITE_SITE_INDEXABLE=true only for the approved production deployment.
+User-agent: *
+Disallow: /

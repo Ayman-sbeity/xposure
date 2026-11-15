@@ -1,0 +1,483 @@
+/* Marketing additions (trust, results, careers, guides, consent, language switch)
+   and right-to-left support for the Arabic pages. Loaded after pages.css. */
+
+.line {
+  display: block;
+}
+
+/* The contact page uses an h1 for the same heading other pages show as an h2. */
+.contact h1 {
+  font-size: 57px;
+  line-height: 1.16;
+  letter-spacing: -2.7px;
+  font-weight: 500;
+  margin: 0;
+}
+@media (max-width: 1000px) {
+  .contact h1 {
+    font-size: 45px;
+  }
+}
+@media (max-width: 700px) {
+  .contact h1 {
+    font-size: 47px;
+    letter-spacing: -1.9px;
+  }
+}
+
+/* Header: logo | nav (centred) | language + CTA */
+header nav {
+  margin-inline: auto;
+}
+.lang-switch {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 4px;
+  margin-inline-end: 22px;
+  border-bottom: 1px solid transparent;
+}
+.lang-switch:hover {
+  border-color: #222;
+}
+.lang-switch[lang="ar"] {
+  font-family: "Noto Sans Arabic Variable", Arial, sans-serif;
+}
+
+/* Small links and buttons */
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  text-decoration: underline;
+}
+.footer-legal {
+  display: flex;
+  gap: 18px;
+}
+.footer-legal a,
+.note-link {
+  text-decoration: underline;
+}
+
+/* Contact extras (shown only when the owner supplies the data) */
+.promise {
+  color: var(--lime) !important;
+  font-weight: 600;
+  margin-top: -10px !important;
+}
+.profile-link {
+  display: flex;
+  width: fit-content;
+  margin-top: 18px;
+}
+.visit {
+  display: grid;
+  gap: 6px;
+  margin-top: 34px;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #d8d8d0;
+}
+.visit strong {
+  font-size: 12px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #b6b6af;
+}
+.visit a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: underline;
+  width: fit-content;
+}
+
+/* Testimonials and client logos */
+.trust {
+  background: #eeeee6;
+}
+.quotes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+.quotes figure {
+  margin: 0;
+  padding: 32px;
+  background: #f7f7f2;
+  border-top: 3px solid var(--pink);
+}
+.quotes blockquote {
+  margin: 0;
+}
+.quotes blockquote p {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  line-height: 1.55;
+}
+.quotes figcaption {
+  display: grid;
+  gap: 2px;
+  margin-top: 24px;
+  font-size: 14px;
+}
+.quotes figcaption span {
+  color: #62645f;
+}
+.logos-title {
+  margin-top: 60px;
+}
+.logos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 48px;
+  align-items: center;
+}
+.logos img {
+  height: 64px;
+  width: auto;
+}
+
+/* Case-study results */
+.results {
+  padding-top: 50px;
+  padding-bottom: 0;
+}
+.results dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px 70px;
+  margin: 0;
+}
+.results dl > div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+.results dd {
+  margin: 0;
+  font-family: "Manrope Variable", "Manrope", Arial, sans-serif;
+  font-size: clamp(44px, 6vw, 80px);
+  letter-spacing: -3px;
+  line-height: 1;
+}
+.results dt {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #62645f;
+}
+
+/* Event video */
+.project-video {
+  margin: 60px 0 0;
+}
+.project-video video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #17171a;
+}
+
+/* Long-form pages: guides and privacy */
+.legal .prose {
+  max-width: 760px;
+}
+.legal .prose h2 {
+  font-size: clamp(24px, 2.4vw, 32px);
+  letter-spacing: -0.8px;
+  line-height: 1.3;
+  margin-top: 46px;
+}
+.legal .prose > h2:first-child,
+.legal .prose > section:first-child h2 {
+  margin-top: 0;
+}
+.legal .prose p,
+.legal .prose li {
+  color: #4f514c;
+}
+.legal .prose ul:not(.tag-list) {
+  margin: 16px 0 0;
+  padding-inline-start: 22px;
+  display: grid;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.legal .prose a:not(.tag-list a) {
+  text-decoration: underline;
+}
+.legal .tag-list {
+  margin-top: 18px;
+}
+.guide-index a > span {
+  display: grid;
+  gap: 8px;
+}
+.guide-index small {
+  font-family: "DM Sans Variable", "DM Sans", Arial, sans-serif;
+  font-size: 15px;
+  letter-spacing: 0;
+  line-height: 1.6;
+  color: #62645f;
+  max-width: 640px;
+}
+
+/* Careers */
+.look-title {
+  margin-top: 46px;
+}
+.check-list.large.light li {
+  border-color: #d6d9ce;
+}
+.role-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.role-list li {
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+.role-list li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.role-list h3 {
+  font-size: 24px;
+  letter-spacing: -0.8px;
+}
+.role-list p {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #5a5c57;
+}
+.join-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 40px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  border-top: 1px solid var(--line);
+}
+.join-band h2 {
+  font-size: clamp(24px, 2.6vw, 34px);
+  letter-spacing: -1px;
+}
+.join-band .text-link {
+  margin-top: 0;
+}
+
+/* Consent banner */
+.consent {
+  position: fixed;
+  inset-inline: 16px;
+  bottom: 16px;
+  z-index: 60;
+  max-width: 720px;
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  padding: 20px 24px;
+  background: #202023;
+  color: #f7f7f2;
+  border: 1px solid #47474a;
+  box-shadow: 0 12px 40px #0006;
+}
+.consent > div:first-child {
+  flex: 1 1 320px;
+}
+.consent h2 {
+  font-family: "DM Sans Variable", "DM Sans", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+.consent p {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #d8d8d0;
+}
+.consent p a {
+  text-decoration: underline;
+}
+.consent-actions {
+  display: flex;
+  gap: 10px;
+}
+.consent .button {
+  width: auto;
+  gap: 0;
+  padding: 13px 18px;
+}
+.consent-decline {
+  background: transparent;
+  color: #f7f7f2;
+  border: 1px solid #8a8a86;
+}
+
+@media (max-width: 700px) {
+  .lang-switch {
+    margin-inline-start: auto;
+    margin-inline-end: 0;
+  }
+  .nav-cta {
+    margin-left: 0;
+    margin-right: 0;
+    margin-inline: 12px 14px;
+  }
+  .consent-actions {
+    width: 100%;
+  }
+  .consent .button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   Arabic (right-to-left)
+   Flex and grid layouts mirror automatically; these rules fix the rest.
+   ========================================================================== */
+:root[dir="rtl"],
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] .serif,
+[dir="rtl"] .h1-kicker,
+[dir="rtl"] .list-title,
+[dir="rtl"] .small-heading,
+[dir="rtl"] .footer-heading,
+[dir="rtl"] .ticker > div,
+[dir="rtl"] .other-services a,
+[dir="rtl"] .next-title,
+[dir="rtl"] .guide-index small,
+[dir="rtl"] .quotes blockquote[lang="ar"] p {
+  font-family: "Noto Sans Arabic Variable", "DM Sans Variable", Arial, sans-serif;
+}
+/* Arabic letters join: tracking breaks the script, and it has no italic. */
+[dir="rtl"] *,
+[dir="rtl"] *::before,
+[dir="rtl"] *::after {
+  letter-spacing: 0 !important;
+}
+[dir="rtl"] .serif {
+  font-style: normal;
+  font-weight: 300;
+}
+[dir="rtl"] h1 {
+  font-size: clamp(40px, 5.2vw, 84px);
+  line-height: 1.3;
+}
+[dir="rtl"] h2,
+[dir="rtl"] .page-hero h1 {
+  line-height: 1.4;
+}
+[dir="rtl"] .page-hero h1 {
+  font-size: clamp(34px, 4.4vw, 64px);
+}
+[dir="rtl"] h3,
+[dir="rtl"] .approach h3,
+[dir="rtl"] .project-caption h3 {
+  line-height: 1.6;
+}
+[dir="rtl"] .eyebrow,
+[dir="rtl"] .section-label,
+[dir="rtl"] .section-label span:last-child,
+[dir="rtl"] .small-note,
+[dir="rtl"] .photo-label,
+[dir="rtl"] .image-index,
+[dir="rtl"] .hero-foot > span,
+[dir="rtl"] .about-picture > span,
+[dir="rtl"] .project-caption span,
+[dir="rtl"] .footer-top > span,
+[dir="rtl"] .footer-bottom,
+[dir="rtl"] .service-content > .eyebrow,
+[dir="rtl"] .service-content li,
+[dir="rtl"] .form-note,
+[dir="rtl"] .work-note {
+  font-size: 13px;
+}
+[dir="rtl"] .h1-kicker {
+  font-size: 14px;
+}
+/* Directional arrows point the other way. */
+[dir="rtl"] .lucide-arrow-up-right {
+  transform: scaleX(-1);
+}
+[dir="rtl"] .service-list button {
+  text-align: start;
+}
+[dir="rtl"] .service-list button svg {
+  margin-left: 0;
+  margin-inline-start: auto;
+}
+[dir="rtl"] .hero-sticker {
+  right: auto;
+  left: 28px;
+}
+[dir="rtl"] .about-picture > span {
+  left: auto;
+  right: 25px;
+}
+[dir="rtl"] .breadcrumbs li + li::before {
+  margin-right: 0;
+  margin-left: 6px;
+}
+[dir="rtl"] .faq-list p {
+  padding: 0 0 20px 30px;
+}
+[dir="rtl"] .pink-period {
+  margin-left: 0;
+  margin-right: 5px;
+}
+[dir="rtl"] .ticker > div {
+  animation-name: marquee-rtl;
+}
+@keyframes marquee-rtl {
+  to {
+    transform: translateX(40%);
+  }
+}
+[dir="rtl"] .wordmark,
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="tel"] {
+  direction: ltr;
+}
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="tel"] {
+  text-align: right;
+}
+@media (max-width: 700px) {
+  [dir="rtl"] h1 {
+    font-size: clamp(36px, 11vw, 56px);
+  }
+  [dir="rtl"] .page-hero h1 {
+    font-size: clamp(30px, 8.5vw, 44px);
+  }
+  [dir="rtl"] .section-label span:last-child {
+    text-align: left;
+  }
+  [dir="rtl"] .contact h2,
+  [dir="rtl"] .contact h1 {
+    font-size: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [dir="rtl"] .ticker > div {
+    animation: none;
+  }
+}

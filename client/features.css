@@ -1,0 +1,959 @@
+/* ==========================================================================
+   MARKETING FEATURES — marquee, plan teaser, stats, brief builder (/plan/),
+   phone action bar and guide reading progress. Colours come from theme.css;
+   timing tokens (--ease-out, --dur…) from motion.css.
+   ========================================================================== */
+
+/* ---------- Services marquee (moves with scrolling, never on its own) ---------- */
+.marquee {
+  display: grid;
+  gap: 6px;
+  overflow: hidden;
+  padding: 26px 0;
+  background: var(--ink);
+  color: #fff;
+}
+.marquee-row {
+  display: flex;
+  width: max-content;
+}
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  padding-inline-end: 28px;
+  font-size: clamp(22px, 3.2vw, 44px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.marquee-row.is-outline .marquee-item {
+  color: transparent;
+  font-weight: 600;
+  -webkit-text-stroke: 1px #ffffffa6;
+}
+.marquee-star {
+  color: var(--pink);
+  font-size: 0.6em;
+  -webkit-text-stroke: 0;
+}
+[dir="rtl"] .marquee-item {
+  font-family: "Noto Sans Arabic Variable", var(--font);
+  text-transform: none;
+}
+@supports (animation-timeline: view()) {
+  .marquee-row {
+    animation: marquee-scroll linear both;
+    animation-timeline: view();
+    animation-range: cover;
+  }
+  .marquee-row.is-reverse {
+    animation-name: marquee-scroll-reverse;
+  }
+  [dir="rtl"] .marquee-row {
+    animation-name: marquee-scroll-rtl;
+  }
+  [dir="rtl"] .marquee-row.is-reverse {
+    animation-name: marquee-scroll-reverse-rtl;
+  }
+}
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-20%);
+  }
+}
+@keyframes marquee-scroll-reverse {
+  from {
+    transform: translateX(-20%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes marquee-scroll-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(20%);
+  }
+}
+@keyframes marquee-scroll-reverse-rtl {
+  from {
+    transform: translateX(20%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ---------- "Plan your event" teaser band ---------- */
+.plan-teaser {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  overflow: hidden;
+  background: var(--ink);
+  color: #fff;
+}
+.plan-teaser > * {
+  position: relative;
+  z-index: 1;
+}
+/* A big faint asterisk that turns as the band scrolls past. */
+.plan-teaser::after {
+  content: "✳";
+  position: absolute;
+  inset-inline-end: -70px;
+  bottom: -170px;
+  font-size: 440px;
+  line-height: 1;
+  color: #ffffff0a;
+  pointer-events: none;
+}
+@supports (animation-timeline: view()) {
+  .plan-teaser::after {
+    animation: turn linear both;
+    animation-timeline: view();
+  }
+}
+@keyframes turn {
+  from {
+    transform: rotate(-40deg);
+  }
+  to {
+    transform: rotate(80deg);
+  }
+}
+.plan-teaser .eyebrow {
+  color: #ffffffa6;
+}
+.plan-teaser h2 {
+  margin: 14px 0 18px;
+}
+.plan-teaser p {
+  max-width: 480px;
+  margin: 0 0 30px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #d6d6d6;
+}
+.plan-teaser-steps {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* The line joining the four steps; it draws downwards when the band is revealed. */
+.plan-teaser-steps::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 28px;
+  top: 28px;
+  bottom: 28px;
+  width: 1px;
+  background: #ffffff40;
+  transform-origin: top;
+}
+.motion-ready .plan-teaser-steps:not(.in)::before {
+  transform: scaleY(0);
+}
+.motion-ready .plan-teaser-steps.in::before {
+  animation: draw-y 1.2s 0.15s var(--ease-in-out) backwards;
+}
+.plan-teaser-steps li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 24px 10px 10px;
+  border: 1px solid #ffffff26;
+  border-radius: 999px;
+  background: #1b1b1b;
+  font-size: 18px;
+  font-weight: 500;
+}
+[dir="rtl"] .plan-teaser-steps li {
+  padding: 10px 10px 10px 24px;
+}
+.plan-teaser-num {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+.plan-teaser-steps li:last-child .plan-teaser-num {
+  background: var(--pink);
+  color: #fff;
+}
+
+/* ---------- Key figures ---------- */
+.stats {
+  text-align: center;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin: 0;
+}
+.stats-grid > div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 12px;
+  padding: 28px 16px 0;
+  border-top: 2px solid var(--ink);
+}
+.stats-grid dd {
+  margin: 0;
+  font-size: clamp(44px, 5vw, 72px);
+  font-weight: 700;
+  line-height: 1;
+}
+.stats-grid dt {
+  font-size: 15px;
+  color: var(--grey);
+}
+/* Fixed-width digits so a counting number does not jiggle. */
+.count-up {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Brief builder (/plan/) ---------- */
+.planner-section {
+  padding-top: 50px;
+  /* Steps slide in sideways; clip so phones never get a horizontal scrollbar. */
+  overflow-x: clip;
+}
+.planner {
+  max-width: 860px;
+  margin-inline: auto;
+}
+.planner-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+.planner-steps li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey);
+  transition: color 0.3s;
+}
+.planner-dot {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  font-size: 13px;
+  letter-spacing: 0;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s,
+    color 0.3s,
+    transform 0.4s var(--ease-spring);
+}
+.planner-steps li.is-current,
+.planner-steps li.is-done {
+  color: var(--ink);
+}
+.planner-steps li.is-current .planner-dot {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+  transform: scale(1.12);
+}
+.planner-steps li.is-done .planner-dot {
+  border-color: var(--pink);
+  background: var(--pink);
+  color: #fff;
+}
+.planner-steps li.is-done .planner-dot svg {
+  animation: spin-in 0.4s var(--ease-spring);
+}
+.planner-bar {
+  height: 3px;
+  margin-bottom: 40px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--line);
+}
+.planner-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--ink), var(--pink));
+  transform-origin: left center;
+  transition: transform 0.6s var(--ease-out);
+}
+[dir="rtl"] .planner-bar span {
+  background: linear-gradient(270deg, var(--ink), var(--pink));
+  transform-origin: right center;
+}
+
+/* Each step slides in from the direction of travel (mirrored in Arabic). */
+@keyframes step-forward {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+@keyframes step-back {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+}
+.planner-panel,
+.planner-done {
+  animation: step-forward 0.5s var(--ease-out) backwards;
+}
+.planner-panel[data-dir="back"],
+[dir="rtl"] .planner-panel,
+[dir="rtl"] .planner-done {
+  animation-name: step-back;
+}
+[dir="rtl"] .planner-panel[data-dir="back"] {
+  animation-name: step-forward;
+}
+.planner-count {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+.planner-panel h2,
+.planner-done h2 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+}
+/* Headings receive focus from script (not by tabbing), so no focus ring is needed. */
+.planner h2[tabindex="-1"]:focus {
+  outline: none;
+}
+.planner-hint {
+  margin: 10px 0 0;
+  color: var(--grey);
+}
+
+/* Choice chips and cards: real radios/checkboxes underneath. */
+.planner .choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-inline-size: 0;
+  margin: 28px 0 0;
+  padding: 0;
+  border: 0;
+}
+.planner .choices-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+.planner .choices-title {
+  margin-bottom: 12px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.planner .choice {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  cursor: pointer;
+  user-select: none;
+  animation: pop 0.5s var(--ease-out) backwards;
+  animation-delay: calc(min(var(--i, 0), 10) * 45ms);
+  transition:
+    border-color 0.25s,
+    background-color 0.25s,
+    color 0.25s,
+    transform 0.25s var(--ease-out),
+    box-shadow 0.3s;
+}
+.planner .choice input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.planner .choice:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -16px #0008;
+}
+.planner .choice:has(input:focus-visible) {
+  outline: 3px solid var(--pink);
+  outline-offset: 3px;
+}
+.planner .choice.is-checked {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+.planner .choice.is-advise {
+  border-style: dashed;
+}
+.planner .choice.is-advise.is-checked {
+  border-style: solid;
+}
+/* The tick always takes its space, so selecting never changes the chip's width. */
+.choice-tick {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--pink);
+  color: #fff;
+  transform: scale(0);
+  transition: transform 0.35s var(--ease-spring);
+}
+.choice.is-checked .choice-tick {
+  transform: scale(1);
+}
+.planner .choice-card {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 150px;
+  padding: 20px;
+  border-radius: 16px;
+}
+.planner .choice-card .choice-tick {
+  position: absolute;
+  top: 14px;
+  inset-inline-end: 14px;
+}
+.choice-icon {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--ink);
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    transform 0.5s var(--ease-spring);
+}
+.planner .choice-card:hover .choice-icon {
+  transform: rotate(-8deg) scale(1.08);
+}
+.planner .choice-card.is-checked .choice-icon {
+  background: #ffffff1f;
+  color: #fff;
+}
+.planner .choice-card .choice-label {
+  font-size: 16px;
+}
+.planner-details {
+  margin-top: 28px;
+}
+.planner-details .choices {
+  margin: 4px 0 24px;
+}
+
+/* Review list on the last step. */
+.planner-summary {
+  display: grid;
+  margin: 28px 0 30px;
+  padding: 6px 22px;
+  border-radius: 14px;
+  background: var(--soft);
+}
+.planner-summary > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 30%) 1fr;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  animation: rise-sm 0.45s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+.planner-summary > div:last-child {
+  border-bottom: 0;
+}
+.planner-summary dt {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+.planner-summary dd {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  font-weight: 500;
+}
+.planner-summary .link-button {
+  flex: none;
+  font-size: 13px;
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+.planner-summary .link-button:hover {
+  color: var(--pink);
+}
+
+.planner-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 30px;
+}
+.planner-nav:empty {
+  display: none;
+}
+.planner-next {
+  margin-inline-start: auto;
+}
+.planner-back svg {
+  transition: transform 0.3s var(--ease-out);
+}
+.planner-back:hover svg {
+  transform: translateX(-3px);
+}
+[dir="rtl"] .planner-back:hover svg {
+  transform: scaleX(-1) translateX(-3px);
+}
+.planner .form-actions {
+  margin-top: 18px;
+}
+@keyframes shake {
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+.planner-error {
+  margin: 18px 0 0;
+  font-weight: 600;
+  color: #b0125f;
+  animation: shake 0.45s var(--ease-in-out);
+}
+
+/* Finished: an animated tick, then a clear "press send" reminder. */
+.planner-done {
+  padding: 20px 0 10px;
+  text-align: center;
+}
+.planner-done > p {
+  max-width: 520px;
+  margin: 14px auto 0;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--grey);
+}
+.planner-done-check {
+  display: block;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 22px;
+}
+.planner-done-check circle,
+.planner-done-check path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.planner-done-check circle {
+  stroke: var(--pink);
+  stroke-width: 2.5;
+  stroke-dasharray: 151;
+  animation: draw-circle 0.8s 0.1s var(--ease-in-out) backwards;
+}
+.planner-done-check path {
+  stroke: var(--ink);
+  stroke-width: 3.5;
+  stroke-dasharray: 32;
+  animation: draw-tick 0.45s 0.75s var(--ease-out) backwards;
+}
+@keyframes draw-circle {
+  from {
+    stroke-dashoffset: 151;
+  }
+}
+@keyframes draw-tick {
+  from {
+    stroke-dashoffset: 32;
+  }
+}
+.planner-done-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px 18px;
+  margin-top: 28px;
+}
+.planner-alt {
+  margin: 36px 0 0;
+  font-size: 14px;
+  text-align: center;
+  color: var(--grey);
+}
+.planner-alt a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.planner-alt a:hover {
+  color: var(--pink);
+}
+
+/* ---------- Chat assistant: floating button and greeting bubble ---------- */
+/* The chat window itself is styled in chat.css (downloaded only when opened). */
+.chat-launcher-wrap {
+  position: fixed;
+  z-index: 40;
+  inset-inline-end: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s,
+    transform 0.3s var(--ease-out);
+}
+.chat-launcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 20px 13px 16px;
+  border: 1px solid #fff;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 12px 30px -10px #0008;
+  transition: transform 0.2s var(--ease-out);
+}
+[dir="rtl"] .chat-launcher {
+  padding: 13px 16px 13px 20px;
+  font-family: "Noto Sans Arabic Variable", var(--font);
+}
+.chat-launcher:hover {
+  transform: translateY(-2px);
+}
+.chat-launcher:active {
+  transform: scale(0.96);
+}
+.chat-teaser {
+  position: relative;
+  max-width: 270px;
+  padding: 14px 36px 14px 16px;
+  border-radius: 16px;
+  border-end-end-radius: 4px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow:
+    0 16px 36px -14px #0006,
+    0 0 0 1px #0000000d;
+  animation: pop 0.45s var(--ease-spring) backwards;
+}
+[dir="rtl"] .chat-teaser {
+  padding: 14px 16px 14px 36px;
+}
+.chat-teaser-text {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: start;
+  color: inherit;
+}
+.chat-teaser-close {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--grey);
+}
+.chat-teaser-close:hover {
+  color: var(--ink);
+}
+@media (max-width: 700px) {
+  .chat-launcher-wrap {
+    inset-inline-end: 16px;
+    bottom: 16px;
+  }
+  .chat-launcher {
+    padding: 14px;
+  }
+  .chat-launcher-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  /* No greeting bubble on phones: screen space matters more there. */
+  .chat-teaser {
+    display: none;
+  }
+  /* The open chat covers the screen; nothing else floats on top of it. */
+  html.chat-open .chat-launcher-wrap,
+  html.chat-open .action-dock {
+    display: none;
+  }
+}
+
+/* ---------- Phone action bar ---------- */
+.action-dock {
+  display: none;
+}
+@media (max-width: 700px) {
+  .action-dock {
+    position: fixed;
+    z-index: 45;
+    inset-inline: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px;
+    border-radius: 999px;
+    background: var(--ink);
+    box-shadow: 0 14px 34px -10px #0007;
+    visibility: hidden;
+    transform: translateY(calc(100% + 30px));
+    transition:
+      transform 0.5s var(--ease-out),
+      visibility 0s linear 0.5s;
+  }
+  .action-dock.is-visible {
+    visibility: visible;
+    transform: none;
+    transition:
+      transform 0.5s var(--ease-spring),
+      visibility 0s;
+  }
+  .dock-main {
+    display: inline-flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 12px;
+    white-space: nowrap;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  [dir="rtl"] .dock-main {
+    font-family: "Noto Sans Arabic Variable", var(--font);
+    font-size: 15px;
+  }
+  .dock-main:active {
+    transform: scale(0.97);
+  }
+  .dock-icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    background: none;
+    border: 1px solid #ffffff59;
+    border-radius: 50%;
+    color: #fff;
+    transition:
+      background-color 0.2s,
+      transform 0.2s;
+  }
+  .dock-icon:active {
+    background: #ffffff26;
+    transform: scale(0.94);
+  }
+  .action-dock :focus-visible {
+    outline-color: #fff;
+  }
+  /* The bar has its own chat button, so the round one steps aside while the bar is up. */
+  body:has(.action-dock.is-visible) .chat-launcher-wrap {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+  }
+  .plan-teaser {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .planner-steps li:not(.is-current) .planner-step-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .planner-steps {
+    grid-template-columns: auto auto auto auto;
+    justify-content: space-between;
+  }
+  .planner .choices-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+  .planner .choice-card {
+    min-height: 130px;
+    padding: 16px;
+  }
+  .planner-summary > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .planner-nav .button {
+    flex: 1 1 auto;
+  }
+}
+@media (max-width: 380px) {
+  .action-dock {
+    gap: 6px;
+  }
+  .dock-main svg {
+    display: none;
+  }
+}
+@media (max-width: 1000px) and (min-width: 701px) {
+  .plan-teaser {
+    gap: 40px;
+  }
+}
+
+/* ---------- Guide reading progress (CSS scroll-driven; hidden where unsupported) ---------- */
+.read-progress {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  .read-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 70;
+    display: block;
+    height: 3px;
+    background: var(--pink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: read-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+  [dir="rtl"] .read-progress {
+    transform-origin: right center;
+  }
+}
+@keyframes read-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-row,
+  .plan-teaser::after,
+  .planner-panel,
+  .planner-done,
+  .planner .choice,
+  .planner-summary > div,
+  .planner-error,
+  .planner-done-check circle,
+  .planner-done-check path,
+  .planner-steps li.is-done .planner-dot svg {
+    animation: none !important;
+  }
+  .motion-ready .plan-teaser-steps::before {
+    animation: none !important;
+    transform: none !important;
+  }
+  .planner .choice:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .action-dock,
+  .chat-launcher-wrap,
+  .read-progress,
+  .marquee {
+    display: none;
+  }
+}

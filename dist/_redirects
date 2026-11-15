@@ -1,0 +1,16 @@
+# Old WordPress URLs -> new pages (permanent).
+/index.php  /  301
+/index.php/  /  301
+/index.php/xposure-hostess-company-in-lebanon/  /about/  301
+/index.php/xposure-hostess-company-in-lebanon  /about/  301
+/index.php/xposure-services/  /services/  301
+/index.php/xposure-services  /services/  301
+/index.php/portfolio/xposure-portfolio/  /work/  301
+/index.php/portfolio/xposure-portfolio  /work/  301
+/index.php/contact/  /contact/  301
+/index.php/contact  /contact/  301
+/index.php/portfolios/xposures-success-at-horeca-exhibition-2024/  /work/horeca-exhibition-2024/  301
+/index.php/portfolios/xposures-success-at-horeca-exhibition-2024  /work/horeca-exhibition-2024/  301
+/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure/  /work/ezzeddine-plus-iftar-2024/  301
+/index.php/portfolios/ezzeddine-plus-iftar-an-evening-of-exquisite-elegance-organized-by-xposure  /work/ezzeddine-plus-iftar-2024/  301
+/index.php/portfolios/*  /work/  301
