@@ -1,5 +1,5 @@
 import type { ImgHTMLAttributes } from 'react';
-import { assets, assetUrl, type AssetKey } from '../content/assets';
+import { assets, assetUrl, type Asset, type AssetKey } from '../content/assets';
 import { useI18n } from '../i18n';
 
 type PhotoProps = { name: AssetKey; priority?: boolean } & Omit<
@@ -10,7 +10,9 @@ type PhotoProps = { name: AssetKey; priority?: boolean } & Omit<
 /** Local photo with intrinsic size (prevents layout shift) and lazy loading by default. */
 export function Photo({ name, priority = false, alt, ...props }: PhotoProps) {
   const { locale } = useI18n();
-  const asset = assets[name];
+  // A photo removed from the media library never breaks the page; it is just left out.
+  const asset = (assets as Record<string, Asset>)[name];
+  if (!asset) return null;
   return (
     <img
       {...props}

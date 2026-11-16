@@ -1,5 +1,21 @@
 # Validation record
 
+## 15 November 2026 — server, admin panel, Zoom booking, content management
+
+Added: Node.js server (Express 5, SQLite built into Node, server-side rendering), admin panel at `/admin/` (dashboard, inbox, meetings and availability, content editor for 10 sections in English and Arabic with history, media library, activity log, settings), `/meeting/` booking pages, forms saving to the inbox, optional Zoom integration, admin command line. The MongoDB API was replaced.
+
+Passed:
+- Strict TypeScript for the site, the admin and the server; production build: 34 prerendered pages + `404.html`; `npm audit --omit=dev`: 0 vulnerabilities.
+- `npm test`: 20 server tests: Beirut winter/summer time; slots respect weekly hours, minimum notice, days off, and the buffer around existing bookings; calendar files folded to 75 bytes; images recognised by their bytes (SVG refused); CSV formula injection neutralised; valid enquiry saved; invalid input and unknown fields rejected; bot trap stores nothing; a time cannot be booked twice; admin API needs a session; cross-site sign-in blocked; wrong password refused; session cookie `HttpOnly` + `SameSite=Strict`; unsafe content (a `javascript:` link) refused; published content live on the page and reset; security headers, redirects and 404; sign-out ends the session.
+- Headless Edge against the **production build** with a fresh database and the production Content-Security-Policy (98 checks): all 35 public pages at 1440 and 390 px with no console or hydration errors, overflow or broken images; the earlier marketing-feature, planner, header, slider and phone-bar checks; all 36 chat checks; and 27 admin/site checks: contact form and event brief saved to the inbox (brief asks for an email or phone), meeting booked in English, Arabic page in Arabic, chat links "book a zoom call" to booking; admin sign-in (wrong password refused), unread badge, inbox details with campaign, note, archive and undo, search; meeting link saved, confirmed and confirmation message prepared; 10 content sections; unsaved-changes bar; Ctrl+S publishes and the live page changes; history restore; wording search; activity log; admin on a phone without overflow.
+- Generated-HTML audit: all 35 public pages pass (one `h1`, title and description lengths, JSON-LD, image sizes, no broken links). The admin app shell is not a public page (noindex).
+- Development data created by these tests was removed from `data/xposure.db`.
+
+Limitations:
+- Zoom: the integration follows Zoom’s Server-to-Server OAuth and Meetings API but was not run against a real Zoom account (no credentials). Pasting a link works without Zoom.
+- No automatic emails are sent (no email provider configured): replies and confirmations open in the admin’s email app or WhatsApp.
+- New Arabic text needs native-speaker review. Not tested on real phones, Safari/iOS, or the final hosting provider. Single-server design: SQLite suits one server instance (ample for this site); a multi-server setup would need a shared database.
+
 ## 15 November 2026 — chat assistant
 
 Added: "Ask us" assistant (`client/chat/engine.ts`, `ChatWidget.tsx`, lazily loaded `ChatPanel.tsx` + `chat.css`), chat button in the phone action bar, privacy-notice section. Removed the floating WhatsApp button (replaced by the assistant). Fixed the home page preloading an image the slider never shows; it now preloads the first slide.

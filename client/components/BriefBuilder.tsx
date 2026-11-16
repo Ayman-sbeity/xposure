@@ -6,7 +6,9 @@ import { getServices } from '../content/services';
 import { useI18n } from '../i18n';
 import { en } from '../i18n/strings';
 import { prefersReducedMotion } from '../motion';
-import { FormActions, openDraft, Required, submittedChannel, type Channel } from './ContactSection';
+import { site } from '../content/site';
+import { runtime } from '../runtime';
+import { deliver, FormActions, messageMeta, openDraft, Required, submittedChannel, type Channel } from './ContactSection';
 import { ArrowLeft, ArrowUpRight, Briefcase, Check, Megaphone, PartyPopper, Sparkles, Store } from './icons';
 
 // EVENT BRIEF BUILDER (/plan/). Four short steps instead of one long form: visitors answer
@@ -132,7 +134,8 @@ export function BriefBuilder() {
   const [brief, setBrief] = useState<Brief>(emptyBrief);
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
-  const [sent, setSent] = useState<Channel | null>(null);
+  const [sent, setSent] = useState<Channel | 'saved' | null>(null);
+  const [sending, setSending] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const moved = useRef(false);
@@ -196,21 +199,61 @@ export function BriefBuilder() {
     openDraft(channel, subject, lines);
   }
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  /** The brief as the API stores it (English labels, for the team). */
+  function payload() {
+    const e = en.plan;
+    return {
+      type: 'brief',
+      name: brief.name.trim(),
+      email: brief.email.trim(),
+      phone: brief.phone.trim(),
+      company: brief.company.trim(),
+      occasion: brief.occasion ? e.occasions[brief.occasion] : 'Not specified',
+      services: brief.services.map((s) => (s === ADVISE ? 'Not sure yet, please advise' : s)),
+      date: brief.date,
+      location: brief.location.trim(),
+      guests: brief.guests ? e.guestRanges[brief.guests] : '',
+      duration: brief.duration ? e.durations[brief.duration] : '',
+      notes: brief.notes.trim(),
+      ...messageMeta(locale),
+    };
+  }
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // Enter on steps 1–3 means "Continue".
     if (step < LAST) return advance();
-    if (String(new FormData(event.currentTarget).get('website') ?? '').trim()) return; // honeypot
+    if (sending || String(new FormData(event.currentTarget).get('website') ?? '').trim()) return; // honeypot
     const channel = submittedChannel(event);
-    send(channel);
+    const lead = { location: 'brief_builder', service: brief.services.join(', '), occasion: brief.occasion ?? undefined };
+
+    if (runtime.api && channel === 'email') {
+      // Sent straight to the team's inbox: they need a way to reply.
+      if (!brief.email.trim() && !brief.phone.trim()) {
+        setError(p.errContact);
+        setAttempt((n) => n + 1);
+        return;
+      }
+      setSending(true);
+      setError('');
+      const status = await deliver('email', payload(), briefMessage(brief));
+      setSending(false);
+      if (status === 'error') {
+        setError(`${t.form.errSend} ${t.form.fallback.replace('{email}', site.email).replace('{phone}', site.phoneDisplay)}`);
+        setAttempt((n) => n + 1);
+        return;
+      }
+      moved.current = true;
+      setSent('saved');
+      track('generate_lead', { method: 'form', ...lead });
+      return;
+    }
+
+    if (runtime.api) await deliver('whatsapp', payload(), briefMessage(brief));
+    else send(channel);
     moved.current = true;
     setSent(channel);
-    track('generate_lead', {
-      method: channel === 'whatsapp' ? 'whatsapp' : 'email_draft',
-      location: 'brief_builder',
-      service: brief.services.join(', '),
-      occasion: brief.occasion ?? undefined,
-    });
+    track('generate_lead', { method: channel === 'whatsapp' ? 'whatsapp' : 'email_draft', ...lead });
   }
 
   const fill = (text: string) => text.replace('{n}', String(step + 1)).replace('{total}', String(LAST + 1));
@@ -269,9 +312,19 @@ export function BriefBuilder() {
             <path d="M15 27.5l7 7 15-15" />
           </svg>
           <h2 ref={headingRef} tabIndex={-1}>
-            {p.doneTitle}
+            {sent === 'saved' ? p.sentTitle : p.doneTitle}
           </h2>
-          <p role="status">{sent === 'whatsapp' ? p.doneWhatsApp : p.doneEmail}</p>
+          <p role="status">{sent === 'saved' ? p.sentText : sent === 'whatsapp' ? p.doneWhatsApp : p.doneEmail}</p>
+          {sent === 'saved' ? (
+            <div className="planner-done-actions">
+              <a className="button dark" href={href('/meeting/')}>
+                {p.talkLink} <ArrowUpRight size={18} />
+              </a>
+              <a className="button outline" href={href('/')}>
+                {t.crumbs.home}
+              </a>
+            </div>
+          ) : (
           <div className="planner-done-actions">
             <button type="button" className="button dark" onClick={() => send(sent)}>
               {p.retry} <ArrowUpRight size={18} />
@@ -291,6 +344,7 @@ export function BriefBuilder() {
               {p.editBrief}
             </button>
           </div>
+          )}
         </div>
       ) : (
         <form className="site-form planner-form" onSubmit={submit} aria-labelledby={titleId}>
@@ -482,13 +536,19 @@ export function BriefBuilder() {
                 </button>
               )}
             </div>
-            {step === LAST && <FormActions status="idle" noteId={`${uid}-note`} />}
+            {step === LAST && <FormActions status={sending ? 'sending' : 'idle'} noteId={`${uid}-note`} sendLabel={p.send} />}
           </div>
         </form>
       )}
 
       <p className="planner-alt">
         {p.prefer} <a href={href('/contact/')}>{p.preferLink}</a>
+        {runtime.api && (
+          <>
+            <br />
+            {p.talk} <a href={href('/meeting/')}>{p.talkLink}</a>
+          </>
+        )}
       </p>
     </div>
   );

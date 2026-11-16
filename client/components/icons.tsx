@@ -8,6 +8,10 @@ import {
   MessageSquareText as MessageSquareTextBase,
   RotateCcw as RotateCcwBase,
   SendHorizontal as SendHorizontalBase,
+  Video as VideoBase,
+  CalendarDays as CalendarDaysBase,
+  CalendarPlus as CalendarPlusBase,
+  Clock as ClockBase,
   PartyPopper as PartyPopperBase,
   Sparkles as SparklesBase,
   Store as StoreBase,
@@ -44,6 +48,10 @@ export const Megaphone = decorative(MegaphoneBase);
 export const MessageSquareText = decorative(MessageSquareTextBase);
 export const RotateCcw = decorative(RotateCcwBase);
 export const SendHorizontal = decorative(SendHorizontalBase);
+export const Video = decorative(VideoBase);
+export const CalendarDays = decorative(CalendarDaysBase);
+export const CalendarPlus = decorative(CalendarPlusBase);
+export const Clock = decorative(ClockBase);
 export const PartyPopper = decorative(PartyPopperBase);
 export const Sparkles = decorative(SparklesBase);
 export const Store = decorative(StoreBase);

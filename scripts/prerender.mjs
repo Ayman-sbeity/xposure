@@ -12,6 +12,9 @@ for (const marker of [HEAD, ROOT, HTML_TAG]) {
   if (!template.includes(marker)) throw new Error(`dist/index.html is missing ${marker}`);
 }
 if (!/<title>[^<]*<\/title>/.test(template)) throw new Error('dist/index.html is missing <title>');
+// The Node server renders pages from this untouched template (dist/index.html is replaced below).
+await mkdir('.ssr', { recursive: true });
+await writeFile('.ssr/template.html', template);
 
 function page(path) {
   const { html, head, lang, dir } = ssr.render(path);

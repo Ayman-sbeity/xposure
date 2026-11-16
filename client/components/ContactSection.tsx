@@ -1,18 +1,47 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { track } from '../analytics';
-import { campaignLines } from '../attribution';
+import { postJson } from '../api';
+import { campaignFromUrl, campaignLines } from '../attribution';
 import { getServices } from '../content/services';
 import { site, whatsappLink } from '../content/site';
 import { useI18n } from '../i18n';
-import { ArrowUpRight, Mail, MessageCircle, Phone } from './icons';
+import { runtime } from '../runtime';
+import { ArrowUpRight, Mail, MessageCircle, Phone, Video } from './icons';
 import { SectionTitle } from './Sections';
 
-// FRONT-END ONLY: this website has no server. A form builds a ready-written message and
-// opens it in the visitor's email app or WhatsApp; the visitor presses send there.
-// Nothing typed into a form is stored or transmitted by the website itself.
+// HOW FORMS ARE SENT
+// - Served by the Node server (runtime.api): the form is saved to the admin panel's inbox.
+//   "Send on WhatsApp" also opens WhatsApp, and a copy is still saved in the inbox.
+// - A plain static export: a ready-written message opens in the visitor's email app or
+//   WhatsApp and they press send there; nothing is stored by the website.
 
 export type Channel = 'email' | 'whatsapp';
-export type FormStatus = 'idle' | Channel;
+export type FormStatus = 'idle' | Channel | 'sending' | 'sent' | 'error';
+
+/** Fields shared by every message sent to the API. */
+export function messageMeta(locale: string) {
+  return { locale, page: window.location.pathname.slice(0, 200), campaign: campaignFromUrl() ?? '' };
+}
+
+/**
+ * Send a form. Returns the status to show. With the server: saved to the inbox (and WhatsApp
+ * opened if chosen). Without it: the prepared draft opens, as before.
+ */
+export async function deliver(channel: Channel, payload: Record<string, unknown>, draft: { subject: string; lines: string[] }): Promise<FormStatus> {
+  if (!runtime.api) {
+    openDraft(channel, draft.subject, draft.lines);
+    return channel;
+  }
+  if (channel === 'whatsapp') {
+    // Open WhatsApp straight away (browsers block pop-ups opened later); the copy for the
+    // inbox is sent in the background and finishes even if the page changes.
+    void postJson('/api/messages', { ...payload, channel: 'whatsapp' }, { keepalive: true });
+    openDraft('whatsapp', draft.subject, draft.lines);
+    return 'whatsapp';
+  }
+  const result = await postJson('/api/messages', { ...payload, channel: 'form' });
+  return result.ok ? 'sent' : 'error';
+}
 
 /** Which of the two submit buttons was pressed. */
 export function submittedChannel(event: FormEvent<HTMLFormElement>): Channel {
@@ -40,20 +69,31 @@ export function Required() {
 }
 
 /** The two send buttons, the explanatory note and the polite status message. */
-export function FormActions({ status, noteId }: { status: FormStatus; noteId: string }) {
+export function FormActions({ status, noteId, sendLabel, sentText }: { status: FormStatus; noteId: string; sendLabel?: string; sentText?: string }) {
   const { t } = useI18n();
+  const api = runtime.api;
+  const sending = status === 'sending';
+  const fallback = t.form.fallback.replace('{email}', site.email).replace('{phone}', site.phoneDisplay);
   return (
     <>
       <div className="form-actions">
-        <button className="button dark" type="submit" name="channel" value="email">
-          <Mail size={18} /> {t.channels.email}
+        <button className="button dark" type="submit" name="channel" value="email" disabled={sending} aria-busy={sending || undefined}>
+          {api ? (
+            <>
+              {sending ? t.form.sending : (sendLabel ?? t.form.send)} <ArrowUpRight size={18} />
+            </>
+          ) : (
+            <>
+              <Mail size={18} /> {t.channels.email}
+            </>
+          )}
         </button>
-        <button className="button outline" type="submit" name="channel" value="whatsapp">
+        <button className="button outline" type="submit" name="channel" value="whatsapp" disabled={sending}>
           <MessageCircle size={18} /> {t.channels.whatsapp}
         </button>
       </div>
       <p className="form-note" id={noteId}>
-        <span aria-hidden="true">*</span> {t.form.required} {t.channels.note}{' '}
+        <span aria-hidden="true">*</span> {t.form.required} {api ? t.form.noteApi : t.channels.note}{' '}
         <a href="/privacy/" hrefLang="en" className="note-link">
           {t.form.privacy}
         </a>
@@ -61,6 +101,12 @@ export function FormActions({ status, noteId }: { status: FormStatus; noteId: st
       <div aria-live="polite" role="status">
         {status === 'email' && <p className="form-status">{t.channels.statusEmail}</p>}
         {status === 'whatsapp' && <p className="form-status">{t.channels.statusWhatsApp}</p>}
+        {status === 'sent' && <p className="form-status">{sentText ?? t.form.statusSent}</p>}
+        {status === 'error' && (
+          <p className="form-status is-error">
+            {t.form.errSend} {fallback}
+          </p>
+        )}
       </div>
     </>
   );
@@ -80,26 +126,47 @@ function EnquiryForm({ defaultService }: { defaultService: string }) {
     if (match) setService(match.name);
   }, []);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (status === 'sending') return;
+    const form = event.currentTarget;
     const channel = submittedChannel(event);
-    const data = new FormData(event.currentTarget);
+    const data = new FormData(form);
     const field = (name: string) => String(data.get(name) ?? '').trim();
     if (field('website')) return; // honeypot: a bot filled the hidden field
-    openDraft(channel, `New event enquiry — ${field('service')}`, [
-      'Hello Xposure,',
-      '',
-      `My name is ${field('name')} from ${field('company') || 'our team'}.`,
-      `Email: ${field('email')}`,
-      ...(field('phone') ? [`Phone / WhatsApp: ${field('phone')}`] : []),
-      `Service: ${field('service')}`,
-      `Event date: ${field('date') || 'To be confirmed'}`,
-      '',
-      field('message'),
-      ...campaignLines(),
-    ]);
-    setStatus(channel);
-    track('generate_lead', { method: channel === 'whatsapp' ? 'whatsapp' : 'email_draft', service: field('service') });
+    if (runtime.api && channel === 'email') setStatus('sending');
+    const next = await deliver(
+      channel,
+      {
+        type: 'enquiry',
+        name: field('name'),
+        email: field('email'),
+        phone: field('phone'),
+        company: field('company'),
+        service: field('service'),
+        date: field('date'),
+        message: field('message'),
+        ...messageMeta(locale),
+      },
+      {
+        subject: `New event enquiry — ${field('service')}`,
+        lines: [
+          'Hello Xposure,',
+          '',
+          `My name is ${field('name')} from ${field('company') || 'our team'}.`,
+          `Email: ${field('email')}`,
+          ...(field('phone') ? [`Phone / WhatsApp: ${field('phone')}`] : []),
+          `Service: ${field('service')}`,
+          `Event date: ${field('date') || 'To be confirmed'}`,
+          '',
+          field('message'),
+          ...campaignLines(),
+        ],
+      },
+    );
+    setStatus(next);
+    if (next === 'sent') form.reset();
+    if (next !== 'error') track('generate_lead', { method: next === 'sent' ? 'form' : channel === 'whatsapp' ? 'whatsapp' : 'email_draft', service: field('service') });
   }
 
   return (
@@ -170,7 +237,7 @@ type ContactSectionProps = {
 };
 
 export function ContactSection({ headingLevel = 2, defaultService = 'Event coordination' }: ContactSectionProps) {
-  const { t, locale } = useI18n();
+  const { t, locale, href } = useI18n();
   return (
     <section id="contact" className="contact section" aria-labelledby="contact-title" data-hide-dock>
       <SectionTitle title={t.titles.contact} id="contact-title" level={headingLevel} />
@@ -200,6 +267,13 @@ export function ContactSection({ headingLevel = 2, defaultService = 'Event coord
             <MessageCircle size={18} /> WhatsApp
           </a>
         </li>
+        {runtime.api && (
+          <li>
+            <a href={href('/meeting/')}>
+              <Video size={18} /> {t.contact.meeting}
+            </a>
+          </li>
+        )}
         {site.companyProfilePdf && (
           <li>
             <a href={site.companyProfilePdf} download onClick={() => track('file_download', { file: 'company_profile', location: 'contact' })}>

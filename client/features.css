@@ -957,3 +957,207 @@
     display: none;
   }
 }
+
+/* ---------- Book a Zoom meeting (/meeting/) ---------- */
+.booker-section {
+  padding-top: 50px;
+  overflow-x: clip;
+}
+.booker {
+  max-width: 860px;
+  margin-inline: auto;
+}
+.booker-message,
+.booker-loading {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding: 40px 20px;
+  border-radius: 18px;
+  background: var(--soft);
+  text-align: center;
+  font-size: 17px;
+}
+.booker-step {
+  animation: step-forward 0.5s var(--ease-out) backwards;
+}
+.booker-step[data-dir="back"],
+[dir="rtl"] .booker-step {
+  animation-name: step-back;
+}
+[dir="rtl"] .booker-step[data-dir="back"] {
+  animation-name: step-forward;
+}
+.booker h2 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.booker h2[tabindex="-1"]:focus {
+  outline: none;
+}
+.booker-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+  color: var(--grey);
+}
+.booker-label {
+  margin: 30px 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+[dir="rtl"] .booker-label {
+  text-transform: none;
+}
+.booker-days {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+.booker-day {
+  display: grid;
+  flex: none;
+  justify-items: center;
+  gap: 2px;
+  width: 78px;
+  padding: 12px 6px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  scroll-snap-align: start;
+  animation: pop 0.45s var(--ease-out) backwards;
+  animation-delay: calc(min(var(--i, 0), 10) * 35ms);
+  transition:
+    border-color 0.2s,
+    background-color 0.2s,
+    color 0.2s,
+    transform 0.2s var(--ease-out);
+}
+.booker-day strong {
+  font-size: 24px;
+  line-height: 1.1;
+}
+.booker-day span {
+  color: var(--grey);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.booker-day:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+}
+.booker-day.is-selected {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+.booker-day.is-selected span {
+  color: #ffffffb3;
+}
+.booker-day.is-placeholder {
+  height: 92px;
+  background: var(--soft);
+  border-color: transparent;
+  animation: none;
+}
+.booker-times {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.booker-times li {
+  animation: pop 0.4s var(--ease-out) backwards;
+  animation-delay: calc(min(var(--i, 0), 16) * 25ms);
+}
+.booker-time {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 8px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 16px;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s,
+    color 0.2s,
+    transform 0.2s var(--ease-out);
+}
+.booker-time span {
+  color: var(--grey);
+  font-size: 12px;
+}
+.booker-time:hover {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.booker-time:hover span {
+  color: #ffffffb3;
+}
+.booker-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: var(--soft);
+  text-align: start;
+}
+.booker-summary > svg {
+  flex: none;
+  color: var(--pink);
+}
+.booker-summary > span {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+}
+.booker-summary > span > span {
+  color: var(--grey);
+  font-size: 15px;
+}
+.booker-summary .link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+[dir="rtl"] .booker-summary .lucide-arrow-left {
+  transform: scaleX(-1);
+}
+.planner-done .booker-summary {
+  max-width: 520px;
+  margin-inline: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .booker-step,
+  .booker-day,
+  .booker-times li {
+    animation: none !important;
+  }
+}
+.form-status.is-error { color: #b0125f; }

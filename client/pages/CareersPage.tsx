@@ -1,39 +1,61 @@
 import { useState, type FormEvent } from 'react';
 import { track } from '../analytics';
-import { FormActions, openDraft, Required, submittedChannel, type FormStatus } from '../components/ContactSection';
+import { deliver, FormActions, messageMeta, Required, submittedChannel, type FormStatus } from '../components/ContactSection';
 import { ArrowUpRight, Check } from '../components/icons';
 import { PageHero } from '../components/PageHero';
 import { Lines, SectionTitle } from '../components/Sections';
 import { useI18n } from '../i18n';
 import { en } from '../i18n/strings';
+import { runtime } from '../runtime';
 
 // The prepared message always uses the English role names, for the Xposure team.
 const ROLE_VALUES = en.careers.roles.map(([name]) => name);
 
 function ApplicationForm() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [status, setStatus] = useState<FormStatus>('idle');
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (status === 'sending') return;
+    const form = event.currentTarget;
     const channel = submittedChannel(event);
-    const data = new FormData(event.currentTarget);
+    const data = new FormData(form);
     const field = (name: string) => String(data.get(name) ?? '').trim();
     if (field('website')) return; // honeypot
-    openDraft(channel, `Job application — ${field('role')}`, [
-      'Hello Xposure,',
-      '',
-      `I would like to apply to work with Xposure as: ${field('role')}.`,
-      `Name: ${field('name')}`,
-      `Email: ${field('email')}`,
-      `Phone / WhatsApp: ${field('phone')}`,
-      ...(field('city') ? [`City / area: ${field('city')}`] : []),
-      ...(field('languages') ? [`Languages: ${field('languages')}`] : []),
-      '',
-      field('experience'),
-    ]);
-    setStatus(channel);
-    track('generate_lead', { method: 'application', service: field('role') });
+    if (runtime.api && channel === 'email') setStatus('sending');
+    const next = await deliver(
+      channel,
+      {
+        type: 'application',
+        name: field('name'),
+        email: field('email'),
+        phone: field('phone'),
+        role: field('role'),
+        city: field('city'),
+        languages: field('languages'),
+        experience: field('experience'),
+        ...messageMeta(locale),
+      },
+      {
+        subject: `Job application — ${field('role')}`,
+        lines: [
+          'Hello Xposure,',
+          '',
+          `I would like to apply to work with Xposure as: ${field('role')}.`,
+          `Name: ${field('name')}`,
+          `Email: ${field('email')}`,
+          `Phone / WhatsApp: ${field('phone')}`,
+          ...(field('city') ? [`City / area: ${field('city')}`] : []),
+          ...(field('languages') ? [`Languages: ${field('languages')}`] : []),
+          '',
+          field('experience'),
+        ],
+      },
+    );
+    setStatus(next);
+    if (next === 'sent') form.reset();
+    if (next !== 'error') track('generate_lead', { method: 'application', service: field('role') });
   }
 
   return (
@@ -90,7 +112,7 @@ function ApplicationForm() {
           <input name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
-      <FormActions status={status} noteId="application-note" />
+      <FormActions status={status} noteId="application-note" sendLabel={t.careers.send} sentText={t.careers.statusSent} />
     </form>
   );
 }

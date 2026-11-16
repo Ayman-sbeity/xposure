@@ -1,6 +1,26 @@
 # How to edit the Xposure website yourself
 
-The site is front-end only: there is no server and no database. Everything you see comes from a few plain files. Run `npm run dev`, open http://localhost:5173, and the page refreshes each time you save a file.
+**Most changes need no code: use the admin panel.** Open `/admin/` on the website (locally: http://localhost:5173/admin/ after `npm run dev`) and sign in.
+
+## The admin panel
+
+| Page | What you do there |
+| --- | --- |
+| **Dashboard** | New messages, meeting requests, leads this month compared with last month, a chart of the last 30 days, where leads come from (Instagram, ads…) and the most requested services. |
+| **Inbox** | Every enquiry, event brief and job application from the website. Open one to read it, reply by email or WhatsApp in one click (the reply starts in the client’s language), call, add a private note for the team, archive it or mark it as spam. Search by name, email or phone. **Export CSV** opens in Excel. |
+| **Meetings** | Zoom meetings booked on the website. For a request: create the Zoom link (one click once Zoom is connected) or paste one, press **Confirm**, then send the ready-written confirmation by WhatsApp or email. You can also add it to your own calendar, mark it completed or cancel it. **Availability** sets your weekly hours, meeting length, break between meetings, minimum notice and days off. |
+| **Website content** | Every part of the site in English and Arabic side by side: business details, home slider, services, projects, questions and answers, key figures, testimonials and logos, Google titles, guides, and **All website wording** (every heading, button and form label, with a search box). Press **Publish changes** (or Ctrl+S): the website updates at once. **History** brings back any earlier version; **Restore original** goes back to the launch content. |
+| **Media library** | Upload photos (JPEG, PNG or WebP, about 1600 px wide), describe them for Google and blind visitors, and see where each is used. Choose them in any photo field of Website content. |
+| **Activity log** | Who changed what and when, including failed sign-in attempts. |
+| **Settings** | Your name and password, connecting Zoom, links to share (with campaign tags), and a full backup download. |
+
+Good to know:
+
+- Empty Arabic fields show the English text, so nothing on the Arabic site is ever blank.
+- The editor checks your changes before publishing (for example, a link must start with `/` or `https://`) and tells you what to fix.
+- Forgot your password? Whoever manages the server runs `npm run admin -- password your@email.com NewPassword` (at least 10 characters).
+
+The rest of this guide is for changes the admin panel does not cover (design, colours, new features). Those are made in the files below: run `npm run dev`, open http://localhost:5173, and the page refreshes each time you save a file. Content saved in the admin panel takes priority over these files.
 
 ## Where things live
 

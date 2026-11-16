@@ -1,28 +1,53 @@
-# Xposure redesign — React + TypeScript (front-end only)
+# Xposure website + admin panel — React, TypeScript, Node.js
 
-> **10 November 2026:** the site is now front-end only. Forms open a ready-written message in the visitor's email app or WhatsApp; nothing is stored. The `server/` folder (Express + MongoDB) is no longer used by the site and is kept only as an archive: delete it if you do not plan to use it. Any section below that mentions `VITE_API_BASE_URL` or the API is historical.
+> **15 November 2026:** the site now runs on a small Node.js server with an **admin panel** at `/admin/`: an inbox for every enquiry, event brief and job application; **Zoom meeting booking** with availability settings; editing of **all website content** in English and Arabic (with version history); a media library; an activity log. Forms save to the inbox; nothing depends on the visitor pressing send in their email app any more. The old MongoDB API in `server/` was replaced. The site still works as a plain static export (forms then fall back to WhatsApp/email drafts, booking is hidden).
 >
-> The visual design follows a white, minimal agency style (full-screen photo slider, centred light/bold headings with a faint background word, round colour-washed service photos, pill buttons) set in `client/theme.css`, using Xposure's own photos and text. **To edit content, photos and colours yourself, read `EDITING.md`.**
+> The visual design follows a white, minimal agency style set in `client/theme.css`. **To edit content without code, use the admin panel; for everything else read `EDITING.md`.**
 
-A responsive editorial redesign based on public Xposure website content. The delivered site is a statically generated (prerendered) multi-page React frontend, with a separate Express/TypeScript/MongoDB enquiry API in `server/`.
+## Quick start
 
-## Quick start in VS Code
-
-Use Node.js 22+ (24 was used for this build).
+Use Node.js 22.18 or newer (24 was used for this build). There is nothing else to install: the database is SQLite, built into Node.
 
 ```sh
 npm ci
-npm run dev
+npm run dev        # website + admin with instant reload: http://localhost:5173
 ```
 
-Open the local URL printed by Vite. Production frontend build:
+The first start creates an admin account and prints its password (also saved in `data/ADMIN-LOGIN.txt`). Sign in at http://localhost:5173/admin/ and change the password in Settings.
+
+Production:
 
 ```sh
-npm run build
-npm run preview
+npm run build      # type-checks everything, builds the site, the admin and the server bundle
+npm test           # 20 server tests (time zones, booking, security, content publishing)
+npm start          # http://localhost:3000 (set PORT to change)
 ```
 
-`npm run build` type-checks, builds the client and an SSR bundle, then `scripts/prerender.mjs` writes a complete HTML file for every page (`dist/<path>/index.html`), plus `404.html`, `sitemap.xml`, `robots.txt`, `_redirects` and `_headers`. All page content, titles, meta descriptions and structured data are in the HTML before JavaScript runs; React then hydrates for interactivity.
+## How it works
+
+| Part | Where | What it does |
+| --- | --- | --- |
+| Website | `client/` | React pages, rendered on the server for every request (full HTML for search engines), then hydrated. |
+| Server | `server/src/` | Express 5 app run directly by Node (TypeScript type-stripping, no build step): page rendering, the public API, the admin API, uploads, security headers. |
+| Admin panel | `admin/` | React app at `/admin/` (dashboard, inbox, meetings, content, media, activity, settings). |
+| Database | `data/xposure.db` | SQLite file: messages, meetings, content edits and their history, uploaded images, admins, sessions, activity. Uploads are in `data/uploads/`. **Back up the `data/` folder.** |
+| Content | `client/content/editable.ts` | The content files are the defaults. Admin edits are saved per section as overrides and applied on top at runtime, on the server and in the browser, so a change is live immediately. "Restore original" removes the override. Every publish keeps the previous version (last 30). |
+
+`npm run build` also still prerenders every page into `dist/` (plus `sitemap.xml`, `robots.txt`, `_redirects`, `_headers`), so the site can be hosted as static files if ever needed; in that mode there is no admin panel.
+
+### Security
+
+- Admin passwords are hashed with scrypt; sessions are random 256-bit tokens in `HttpOnly`, `SameSite=Strict` cookies (`Secure` and `__Host-` prefixed in production), stored only as SHA-256 hashes; sessions end on sign-out and on password change.
+- Every admin change must come from the admin panel itself (Origin check plus a custom header): forms on other sites cannot act for a signed-in admin.
+- Sign-in is rate-limited (10 failed attempts per 15 minutes); the public forms and booking are rate-limited too, and have a hidden bot trap.
+- All input is validated with Zod (unknown fields rejected, lengths limited). Content edits are checked against the shape of the original content, links must start with `/` or `https://`, and images must exist, so a bad save cannot break a page.
+- Uploads are identified by their bytes (JPEG, PNG, WebP only; no SVG), renamed randomly, served with `nosniff`.
+- Production pages send a strict Content-Security-Policy (scripts only from the site itself and, if analytics are on, Google Tag Manager), `frame-ancestors 'none'`, `nosniff`, a referrer policy and a permissions policy; HSTS when `PUBLIC_ORIGIN` is HTTPS.
+- CSV exports cannot run spreadsheet formulas. Activity log records sign-ins (including failed ones) and every change.
+
+### Deploying
+
+Any host that runs Node.js with a persistent disk works (a VPS, Render, Railway, Fly.io, a cPanel Node app…). Run `npm ci && npm run build`, then `npm start` behind HTTPS, and set at least `PUBLIC_ORIGIN`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (first start only) and, for the approved launch, `VITE_SITE_INDEXABLE=true` (see `.env.example`). Keep `data/` on the persistent disk and back it up. Forgotten password: `npm run admin -- password you@example.com NewPassword123`.
 
 ## Pages
 
@@ -36,7 +61,9 @@ npm run preview
 | `/work/<slug>/` | Project pages: Ezzeddine Plus annual Iftar 2024, Horeca Exhibition 2024 |
 | `/contact/` | Enquiry form, contact routes and FAQ (replaces `/index.php/contact/`) |
 | `/plan/` | Event brief builder: four guided steps (occasion, services, details, send). The header CTA, the first slide and the phone action bar point here |
+| `/meeting/` | Book a Zoom meeting: free times from the admin's availability settings (server mode only) |
 | `/careers/` | Join the team: roles and application form |
+| `/admin/` | Admin panel (sign-in required, never indexed) |
 | `/guides/`, `/guides/<slug>/` | Practical guides (English only) |
 | `/privacy/` | Privacy notice (English only) |
 | `/ar/...` | Arabic (right-to-left) version of every page above except guides and privacy |
@@ -54,8 +81,11 @@ Routes are defined in `client/routes.tsx`. Adding a service or project to the co
 - `client/style.css` + `client/pages.css`: responsive styling and reduced-motion support.
 - `public/assets/`: 53 optimized source images and a cropped original logo. `public/og-image.jpg` (1200×630 social preview) and `public/apple-touch-icon.png` were generated from those assets.
 - `source-export/`: original exported images, raw HTML snapshots (untrusted reference data), `content/pages.json` and `content/asset-manifest.json` (provenance).
-- `server/`: Express + TypeScript + MongoDB API.
-- `scripts/prerender.mjs`: static HTML generation.
+- `client/content/editable.ts`: which content the admin panel can edit, how each section maps to the content files, and its validation.
+- `client/chat/engine.ts`: the chat assistant's vocabulary and answers.
+- `server/src/`: `index.ts` (start), `app.ts` (middleware order), `site.ts` (page rendering), `routes/public.ts` and `routes/admin.ts` (APIs), `auth.ts`, `db.ts` (schema and migrations), `booking.ts` (availability, time zones, calendar files), `zoom.ts`, `files.ts`, `schemas.ts` (validation), `cli.ts` (admin accounts). Tests in `server/test/`.
+- `admin/`: the admin panel (`App.tsx` layout and routing, `pages/`, `ui.tsx` components, `admin.css` design system).
+- `scripts/prerender.mjs`: static HTML generation (and the page template the server uses).
 
 ## Marketing features and owner switches
 
@@ -102,16 +132,21 @@ All motion lives in `client/motion.css` (system and existing sections) and `clie
 
 Text for both languages lives in `client/i18n/strings.ts`; Arabic service, project and FAQ content in `client/content/ar.ts`. The Arabic was translated from the English without adding facts and **must be reviewed by a native speaker** before `arabicReviewed` is set.
 
-The careers form works like the enquiry form: an email draft without the API, or `POST /api/applications` (validated, rate-limited, write-only) with it.
+The careers form works like the enquiry form: with the server it saves to the admin inbox as a job application; without it, it prepares an email or WhatsApp draft.
 
 ## Environment variables
 
-Copy `.env.example` to `.env`.
+Copy `.env.example` to `.env` (the server reads it at start; `VITE_*` values are built into the pages, so rebuild after changing them).
 
 - `VITE_SITE_URL` — canonical origin (default `https://xposurelb.com`). Used for canonical URLs, Open Graph, JSON-LD and the sitemap.
-- `VITE_SITE_INDEXABLE` — `true` **only** for the approved production deployment. Any other value builds a noindex preview: `robots.txt` disallows crawling, every page has `noindex, nofollow`, and `_headers` adds `X-Robots-Tag`.
-- `VITE_API_BASE_URL` — Express API origin. Empty = email-draft mode (see below).
+- `VITE_SITE_INDEXABLE` — `true` **only** for the approved production deployment. Any other value builds a noindex preview: `robots.txt` disallows crawling, every page has `noindex, nofollow`, and the server adds `X-Robots-Tag`.
 - `VITE_GTM_ID` — Google Tag Manager container ID (`GTM-XXXXXXX`). Empty = no analytics, no cookies, no consent banner.
+- `PORT` (default 5173 in development, 3000 in production), `HOST`, `DATA_DIR` (default `data`).
+- `PUBLIC_ORIGIN` — the public address, e.g. `https://xposurelb.com`. Recommended in production (stricter admin request checks, HSTS).
+- `TRUST_PROXY` — set when behind a reverse proxy so rate limits see real visitor IPs (defaults to local proxies in production).
+- `COOKIE_SECURE` — leave unset (secure in production). `false` only to test a production build over plain http.
+- `ADMIN_EMAIL`, `ADMIN_PASSWORD` — the first admin account, created on the first production start if none exists.
+- `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET`, `ZOOM_USER_ID` — optional Zoom Server-to-Server OAuth app (scopes `meeting:write:meeting:admin`, `meeting:delete:meeting:admin`); `ZOOM_USER_ID` is the email of the hosting Zoom user. With them, Zoom links are created in one click (or automatically).
 
 ## SEO and performance
 
@@ -126,19 +161,11 @@ Copy `.env.example` to `.env`.
 
 ## Enquiry behavior
 
-Without `VITE_API_BASE_URL`, the form prepares a `mailto:` draft. The visitor must send it in their email app. No enquiry is stored or transmitted automatically by the preview.
+With the server, forms save to the admin inbox (`POST /api/messages`, `POST /api/meetings`): validated, rate-limited, with a hidden bot trap. "Send on WhatsApp" opens WhatsApp with the ready-written message and still saves a copy to the inbox. The event brief requires an email or phone when sent to the inbox, so the team can reply. Service pages preselect their own service, and `/contact/?service=<slug>` or `/plan/?service=<slug>&occasion=<key>` preselect answers. Campaign tags (`?utm_source=…`) are stored with each lead and summarised on the dashboard.
 
-The form has an optional phone/WhatsApp field and a hidden honeypot field. Service pages preselect their own service, and any link to `/contact/?service=<slug>` preselects that service.
+Without the server (static export), forms prepare a `mailto:` or WhatsApp draft as before, and the meeting page offers WhatsApp instead.
 
-For the MongoDB flow:
-
-1. Run MongoDB locally or provision a production MongoDB instance.
-2. Copy `server/.env.example` to `server/.env`, set the real URI and frontend origin.
-3. Run `npm --prefix server ci`, then `npm --prefix server run dev`.
-4. Set `VITE_API_BASE_URL=http://localhost:4000` in `.env`.
-5. Restart the frontend or rebuild it.
-
-The API offers `GET /api/health`, `POST /api/inquiries` and `POST /api/applications`. Input is validated with Zod 4 (strict object, trimmed strings, length limits, phone pattern, honeypot), payload size is limited, basic rate limits and Helmet are enabled, and Mongoose stores enquiries. No public read endpoint exposes enquiries. There is no admin dashboard or email delivery provider configured. Add authenticated administration and notifications before production if required. MongoDB connectivity/persistence has not been integration-tested because a database was not provisioned.
+No email is sent automatically: the admin panel's reply buttons open an email or WhatsApp message to the client, written in their language. Automatic notification emails need an email provider (SMTP or similar); add one if required.
 
 ## Analytics
 
@@ -159,9 +186,10 @@ The proposed typography/color treatment is a new design direction. Original logo
 - Approve copy, photography, project descriptions and official social links.
 - Confirm the final domain (`VITE_SITE_URL`), then build with `VITE_SITE_INDEXABLE=true` only for the approved launch.
 - Verify the 301 map against Search Console and server logs; submit `sitemap.xml` in Google Search Console and Bing Webmaster Tools.
-- Validate contact delivery, MongoDB retention, privacy notice and spam controls. Add a privacy policy page before adding analytics or ads.
-- Add accessible authenticated content administration if required.
-- Review security, performance, accessibility and backups in the real deployment environment.
+- Deploy on Node hosting with HTTPS and a persistent disk; set `PUBLIC_ORIGIN` and the first admin account; schedule backups of `data/`.
+- Sign in, change the admin password, set meeting availability, and (optionally) connect Zoom.
+- Decide who checks the inbox and how often; consider automatic notification emails (needs an email provider).
+- Validate the privacy notice and spam controls with real traffic. Review security, performance, accessibility and backups in the real deployment environment.
 
 ## Validation completed
 

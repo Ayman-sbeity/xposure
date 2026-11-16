@@ -5,6 +5,7 @@ import { useI18n } from '../i18n';
 import { openConsentSettings } from './ConsentBanner';
 import { Instagram, Linkedin, Mail } from './icons';
 import { staggerIndex } from './Sections';
+import { runtime } from '../runtime';
 
 export function Footer() {
   const { t, href, locale } = useI18n();
@@ -42,6 +43,7 @@ export function Footer() {
           <h2 id="footer-agency" className="footer-heading">{t.footer.agency}</h2>
           <ul>
             <li><a href={href('/plan/')}>{t.crumbs.plan}</a></li>
+            {runtime.api && <li><a href={href('/meeting/')}>{t.crumbs.meeting}</a></li>}
             <li><a href={href('/about/')}>{t.footer.about}</a></li>
             <li><a href={href('/work/')}>{t.footer.work}</a></li>
             <li><a href={href('/careers/')}>{t.footer.careers}</a></li>

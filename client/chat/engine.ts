@@ -20,10 +20,12 @@ import { getProjects } from '../content/projects';
 import { getServices } from '../content/services';
 import { site, whatsappLink } from '../content/site';
 import { localizePath, stringsFor, type Locale } from '../i18n';
+import { runtime } from '../runtime';
 
 export type Topic =
   | 'welcome'
   | 'greeting'
+  | 'meeting'
   | 'services'
   | 'service'
   | 'pricing'
@@ -65,6 +67,11 @@ type Rule = { topic: Topic; strong?: string[]; words?: string[]; weak?: string[]
 
 // Order matters only for ties: earlier topics win.
 const TOPICS: Rule[] = [
+  {
+    topic: 'meeting',
+    strong: ['zoom', 'video call', 'video meeting', 'online meeting', 'book a meeting', 'schedule a meeting', 'a meeting with', 'meet with you', 'meet you', 'meet the team', 'schedule a call', 'book a call', 'appointment', 'اجتماع معكم', 'اجتماع مع', 'زوم', 'موعد', 'مكالمه فيديو', 'rendez vous'],
+    words: ['meeting', 'اجتماع', 'reunion'],
+  },
   {
     topic: 'contact',
     strong: ['whatsapp', 'whats app', 'watsap', '=wts', 'call', 'phone', 'telephone', 'واتس', 'وتساب', 'اتصل', 'اتصال', 'هاتف', 'تلفون', 'تليفون', 'appel'],
@@ -165,7 +172,7 @@ const OCCASION_WORDS: Record<Occasion, string[]> = {
 };
 
 // Topics that are a clear request in their own right (they win over a service name).
-const SPECIFIC = new Set<Topic>(['pricing', 'contact', 'availability', 'careers', 'teamSize', 'requirements', 'combine', 'brief', 'start', 'process', 'hours', 'location', 'work']);
+const SPECIFIC = new Set<Topic>(['meeting', 'pricing', 'contact', 'availability', 'careers', 'teamSize', 'requirements', 'combine', 'brief', 'start', 'process', 'hours', 'location', 'work']);
 
 // ---------------------------------------------------------------------------
 // Matching
@@ -225,7 +232,9 @@ export function detect(question: string): Detection {
   const services = SERVICES_PREPARED.filter(([, words]) => words.some((w) => hit(text, tokens, w))).map(([slug]) => slug);
   const occasion = OCCASIONS_PREPARED.find(([, words]) => words.some((w) => hit(text, tokens, w)))?.[0] ?? null;
 
-  if (best && SPECIFIC.has(best.topic) && best.score >= 1) return { ...best, services, occasion };
+  // "Hostesses for a company meeting" is about hostesses: the word "meeting" alone is weak.
+  const weakMeeting = best?.topic === 'meeting' && best.score < 2 && (services.length > 0 || occasion !== null);
+  if (best && SPECIFIC.has(best.topic) && best.score >= 1 && !weakMeeting) return { ...best, services, occasion };
   if (services.length === 1) return { topic: 'service', score: 1, services, occasion };
   if (services.length > 1) return { topic: 'combine', score: 1, services, occasion };
   if (occasion) return { topic: 'occasion', score: 1, services, occasion };
@@ -283,6 +292,7 @@ function quick(lang: Locale, ...keys: (keyof ReturnType<typeof stringsFor>['chat
   const q = stringsFor(lang).chat.quick;
   const topics: Record<string, Topic> = {
     services: 'services',
+    meeting: 'meeting',
     price: 'pricing',
     plan: 'start',
     team: 'contact',
@@ -302,7 +312,14 @@ function compose(topic: Topic, ctx: Ctx): BotReply {
 
   switch (topic) {
     case 'welcome':
-      return reply(c.welcome, { quick: quick(lang, 'services', 'price', 'plan', 'team') });
+      return reply(c.welcome, { quick: runtime.api ? quick(lang, 'services', 'price', 'meeting', 'plan', 'team') : quick(lang, 'services', 'price', 'plan', 'team') });
+
+    case 'meeting':
+      // Online booking needs the server; without it, the team arranges the call on WhatsApp.
+      return reply(c.meeting, {
+        links: runtime.api ? [page(lang, c.links.meeting, '/meeting/'), whatsapp(lang, question)] : [whatsapp(lang, question ?? t.meeting.whatsappMessage), call(lang)],
+        quick: quick(lang, 'services', 'price'),
+      });
 
     case 'greeting':
       return reply(c.greeting, { quick: quick(lang, 'services', 'price', 'plan', 'team') });

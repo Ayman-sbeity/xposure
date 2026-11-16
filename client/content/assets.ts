@@ -1,7 +1,8 @@
 // Local, optimized images (public/assets). Original URLs and provenance for every
 // file are recorded in source-export/content/asset-manifest.json.
 // Do not use photos showing regulated products or brands (e.g. tobacco or vape).
-export type Asset = { file: string; width: number; height: number; alt: string; altAr: string };
+/** `src` is set for images uploaded in the admin panel (served from /uploads/). */
+export type Asset = { file: string; width: number; height: number; alt: string; altAr: string; src?: string };
 
 export const assets = {
   hero: {
@@ -64,4 +65,8 @@ export const assets = {
 
 export type AssetKey = keyof typeof assets;
 
-export const assetUrl = (key: AssetKey): string => `/assets/${assets[key].file}`;
+export const assetUrl = (key: AssetKey): string => {
+  const asset = (assets as Record<string, Asset>)[key];
+  if (!asset) return '';
+  return asset.src ?? `/assets/${asset.file}`;
+};

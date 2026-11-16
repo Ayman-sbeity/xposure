@@ -6,3 +6,5 @@ server/.env
 .ssr/
 server/dist/
 *.zip
+dist/
+data/

@@ -1,37 +1,56 @@
-import 'dotenv/config';
-import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import rateLimit from 'express-rate-limit';
-import mongoose from 'mongoose';
-import {z} from 'zod';
-import {enquiry,application} from './validation.js';
-const app=express();
-app.disable('x-powered-by');
-app.use(helmet());
-app.use(cors({origin:process.env.CLIENT_ORIGIN||'http://localhost:5173',methods:['GET','POST']}));
-app.use(express.json({limit:'16kb'}));
+// Starts the Xposure website, its API and the admin panel.
+//   npm run dev     development (instant reload)      http://localhost:5173
+//   npm start       production (after npm run build)   http://localhost:3000
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import http from 'node:http';
+import path from 'node:path';
+import { createApp } from './app.ts';
+import { createAdmin } from './auth.ts';
+import { config } from './config.ts';
+import { openDatabase, type Db } from './db.ts';
 
-const schema=new mongoose.Schema({name:{type:String,required:true},email:{type:String,required:true},company:String,phone:String,service:{type:String,required:true},date:String,message:{type:String,required:true},status:{type:String,enum:['new','reviewed'],default:'new'}},{timestamps:true,strict:'throw'});
-const Inquiry=mongoose.model('Inquiry',schema);
-app.get('/api/health',(_req,res)=>res.status(mongoose.connection.readyState===1?200:503).json({status:mongoose.connection.readyState===1?'ready':'database-unavailable'}));
-app.post('/api/inquiries',rateLimit({windowMs:15*60*1000,limit:10,standardHeaders:'draft-7',legacyHeaders:false}),async(req,res,next)=>{
- const result=enquiry.safeParse(req.body);if(!result.success){res.status(400).json({error:'Please check the enquiry fields.',fields:z.flattenError(result.error).fieldErrors});return;}
- if(mongoose.connection.readyState!==1){res.status(503).json({error:'Enquiries are temporarily unavailable. Please email or call us.'});return;}
- try{const {website,...data}=result.data;const entry=await Inquiry.create(data);res.status(201).json({id:entry.id,message:'Your enquiry has been received.'});}catch(e){next(e);}
+const db = openDatabase(path.join(config.dataDir, 'xposure.db'));
+await ensureFirstAdmin(db);
+
+const server = http.createServer();
+const { app, site } = await createApp({ db, production: config.production, dataDir: config.dataDir, httpServer: server });
+server.on('request', app);
+server.listen(config.port, config.host, () => {
+  const base = `http://localhost:${config.port}`;
+  console.log(`\n  Xposure ${config.production ? '(production)' : '(development)'}\n  Website       ${base}/\n  Admin panel   ${base}/admin/\n`);
 });
-// Job applications from the careers page. Write-only: there is no endpoint that reads them back.
-const applicationSchema=new mongoose.Schema({name:{type:String,required:true},email:{type:String,required:true},phone:{type:String,required:true},city:String,role:{type:String,required:true},languages:String,experience:String,status:{type:String,enum:['new','reviewed'],default:'new'}},{timestamps:true,strict:'throw'});
-const Application=mongoose.model('Application',applicationSchema);
-app.post('/api/applications',rateLimit({windowMs:15*60*1000,limit:5,standardHeaders:'draft-7',legacyHeaders:false}),async(req,res,next)=>{
- const result=application.safeParse(req.body);if(!result.success){res.status(400).json({error:'Please check the application fields.',fields:z.flattenError(result.error).fieldErrors});return;}
- if(mongoose.connection.readyState!==1){res.status(503).json({error:'Applications are temporarily unavailable. Please email or call us.'});return;}
- try{const {website,...data}=result.data;const entry=await Application.create(data);res.status(201).json({id:entry.id,message:'Your application has been received.'});}catch(e){next(e);}
-});
-app.use((_req,res)=>res.status(404).json({error:'Not found'}));
-app.use((error:unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{if(error instanceof SyntaxError){res.status(400).json({error:'Invalid request body'});return;}console.error('Request failed:',error instanceof Error?error.name:'UnknownError');res.status(500).json({error:'Something went wrong. Please try again later.'});});
-const uri=process.env.MONGODB_URI;if(!uri)throw new Error('MONGODB_URI must be configured');
-await mongoose.connect(uri,{serverSelectionTimeoutMS:5000});
-const server=app.listen(Number(process.env.PORT)||4000,()=>console.log('Xposure API ready'));
-async function shutdown(){server.close();await mongoose.disconnect();process.exit(0)}
-process.on('SIGTERM',shutdown);process.on('SIGINT',shutdown);
+
+async function shutdown() {
+  server.close();
+  await site.close();
+  db.close();
+  process.exit(0);
+}
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+
+/**
+ * The first admin account. In production it comes from ADMIN_EMAIL / ADMIN_PASSWORD (or the
+ * `npm run admin` command). In development one is created with a random password, printed
+ * here and saved in data/ADMIN-LOGIN.txt.
+ */
+async function ensureFirstAdmin(database: Db): Promise<void> {
+  const { n } = database.prepare('SELECT COUNT(*) AS n FROM admins').get() as { n: number };
+  if (Number(n) > 0) return;
+  if (config.adminEmail && config.adminPassword) {
+    await createAdmin(database, config.adminEmail, config.adminPassword, 'Admin');
+    console.log(`  Admin account created for ${config.adminEmail}.`);
+    return;
+  }
+  if (config.production) {
+    console.warn('  No admin account yet. Set ADMIN_EMAIL and ADMIN_PASSWORD, or run: npm run admin -- create <email> <password>');
+    return;
+  }
+  const email = 'admin@xposurelb.com';
+  const password = crypto.randomBytes(9).toString('base64url');
+  await createAdmin(database, email, password, 'Xposure admin');
+  const note = `Xposure admin panel (development)\n\nAddress:  http://localhost:${config.port}/admin/\nEmail:    ${email}\nPassword: ${password}\n\nChange the password in Settings after signing in, then delete this file.\n`;
+  fs.writeFileSync(path.join(config.dataDir, 'ADMIN-LOGIN.txt'), note);
+  console.log(`\n  First admin account created\n  Email:    ${email}\n  Password: ${password}\n  (also saved in data/ADMIN-LOGIN.txt)`);
+}
