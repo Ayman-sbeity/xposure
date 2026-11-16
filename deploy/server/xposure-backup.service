@@ -1,0 +1,8 @@
+[Unit]
+Description=Back up the Xposure database and uploaded photos
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/xposure-backup nightly
+Nice=10
+IOSchedulingClass=idle

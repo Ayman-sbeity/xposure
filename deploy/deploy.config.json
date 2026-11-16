@@ -1,0 +1,9 @@
+{
+  "host": "134.209.7.58",
+  "domain": "134-209-7-58.sslip.io",
+  "redirectDomains": [],
+  "sshKey": "~/.ssh/xposure_deploy",
+  "adminEmail": "admin@xposurelb.com",
+  "siteUrl": "https://xposurelb.com",
+  "indexable": false
+}

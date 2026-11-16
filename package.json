@@ -9,7 +9,13 @@
     "start": "node server/src/index.ts --production",
     "test": "node --test \"server/test/**/*.test.ts\"",
     "admin": "node server/src/cli.ts",
-    "preview:static": "vite preview --host 0.0.0.0"
+    "preview:static": "vite preview --host 0.0.0.0",
+    "deploy": "node scripts/deploy.mjs",
+    "deploy:setup": "node scripts/deploy.mjs setup",
+    "deploy:rollback": "node scripts/deploy.mjs rollback",
+    "deploy:status": "node scripts/deploy.mjs status",
+    "deploy:logs": "node scripts/deploy.mjs logs",
+    "deploy:backup": "node scripts/deploy.mjs backup"
   },
   "dependencies": {
     "@fontsource-variable/jost": "^5.3.0",

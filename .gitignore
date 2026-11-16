@@ -8,3 +8,5 @@ server/dist/
 *.zip
 dist/
 data/
+.deploy/
+backups/

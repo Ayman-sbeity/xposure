@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Makes a release live: backs up the database, switches /srv/xposure/current, restarts the
+# service and checks it answers. If it does not, the previous release is put back automatically.
+#   xposure-activate <release-id>    switch to a release
+#   xposure-activate rollback        go back to the previous release
+set -euo pipefail
+BASE=/srv/xposure
+ENV_FILE=/etc/xposure/xposure.env
+DB=/var/lib/xposure/xposure.db
+
+healthy() {
+  for _ in $(seq 1 40); do
+    curl -fsS --max-time 2 http://127.0.0.1:3000/api/health >/dev/null 2>&1 && return 0
+    sleep 1
+  done
+  return 1
+}
+point() { # atomic symlink swap
+  ln -sfn "$2" "$BASE/$1.tmp"
+  mv -Tf "$BASE/$1.tmp" "$BASE/$1"
+}
+
+ARG="${1:?usage: xposure-activate <release-id>|rollback}"
+CURRENT="$(readlink -e "$BASE/current" 2>/dev/null || true)"
+if [ "$ARG" = rollback ]; then
+  TARGET="$(readlink -e "$BASE/previous" 2>/dev/null || true)"
+  [ -n "$TARGET" ] && [ -d "$TARGET" ] || { echo "No previous release to go back to." >&2; exit 1; }
+else
+  [[ "$ARG" =~ ^[0-9]{8}-[0-9]{6}-[0-9a-z-]{1,40}$ ]] || { echo "Bad release id: $ARG" >&2; exit 2; }
+  TARGET="$BASE/releases/$ARG"
+  [ -d "$TARGET" ] || { echo "Release not found: $ARG" >&2; exit 2; }
+fi
+
+/usr/local/sbin/xposure-backup before-deploy
+
+echo "• Switching to $(basename "$TARGET")"
+point current "$TARGET"
+systemctl restart xposure
+
+if ! healthy; then
+  echo "✗ The new version did not start. Last log lines:" >&2
+  journalctl -u xposure -n 25 --no-pager >&2 || true
+  if [ -n "$CURRENT" ] && [ -d "$CURRENT" ]; then
+    point current "$CURRENT"
+    systemctl restart xposure
+    healthy && echo "↺ Put back $(basename "$CURRENT"); the site stayed on the previous version." >&2
+  fi
+  exit 1
+fi
+
+if [ -n "$CURRENT" ] && [ "$CURRENT" != "$TARGET" ]; then point previous "$CURRENT"; fi
+
+# The first admin password is only needed until the account exists.
+if grep -q '^ADMIN_PASSWORD=' "$ENV_FILE" && [ -f "$DB" ]; then
+  admins="$(sqlite3 "$DB" 'SELECT COUNT(*) FROM admins;' 2>/dev/null || echo 0)"
+  if [ "${admins:-0}" -gt 0 ]; then
+    sed -i '/^ADMIN_PASSWORD=/d' "$ENV_FILE"
+    echo "• Admin account exists; its start-up password was removed from the server settings"
+  fi
+fi
+
+# Keep the 5 newest releases, plus whatever is live or kept for rollback.
+live="$(readlink -e "$BASE/current")"
+prev="$(readlink -e "$BASE/previous" 2>/dev/null || true)"
+keep="$(ls -1 "$BASE/releases" | sort | tail -n 5)"
+for name in $(ls -1 "$BASE/releases"); do
+  path="$BASE/releases/$name"
+  if ! grep -qx "$name" <<<"$keep" && [ "$path" != "$live" ] && [ "$path" != "$prev" ]; then rm -rf "$path"; fi
+done
+
+echo "✓ Live: $(basename "$TARGET")"

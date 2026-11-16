@@ -1,0 +1,10 @@
+[Unit]
+Description=Nightly Xposure backup
+
+[Timer]
+OnCalendar=*-*-* 00:30:00 UTC
+RandomizedDelaySec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

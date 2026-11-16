@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Copies the database (safely, while the site runs) and the uploaded photos to
+# /var/backups/xposure. Runs every night and before every deploy; keeps the newest 14 of each.
+set -euo pipefail
+DATA=/var/lib/xposure
+OUT=/var/backups/xposure
+KEEP=14
+LABEL="${1:-nightly}"
+umask 027
+mkdir -p "$OUT"
+if [ ! -f "$DATA/xposure.db" ]; then
+  echo "• No database yet: nothing to back up"
+  exit 0
+fi
+STAMP="$(date -u +%Y%m%d-%H%M%S)-$LABEL"
+sqlite3 "$DATA/xposure.db" ".backup '$OUT/xposure-$STAMP.db'"
+gzip -9 "$OUT/xposure-$STAMP.db"
+if [ -d "$DATA/uploads" ] && [ -n "$(ls -A "$DATA/uploads")" ]; then
+  tar -czf "$OUT/uploads-$STAMP.tgz" -C "$DATA" uploads
+fi
+# The deploy account may read backups (npm run deploy:backup downloads them).
+chgrp deploy "$OUT"/*-"$STAMP".* 2>/dev/null || true
+ls -1t "$OUT"/xposure-*.db.gz 2>/dev/null | tail -n +$((KEEP + 1)) | xargs -r rm -f || true
+ls -1t "$OUT"/uploads-*.tgz 2>/dev/null | tail -n +$((KEEP + 1)) | xargs -r rm -f || true
+echo "• Backup: xposure-$STAMP.db.gz"

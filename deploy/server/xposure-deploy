@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Runs as the 'deploy' account: unpacks an uploaded release, installs its dependencies and asks
+# xposure-activate to make it live. Called by `npm run deploy`.
+set -euo pipefail
+ID="${1:?usage: xposure-deploy <release-id>}"
+[[ "$ID" =~ ^[0-9]{8}-[0-9]{6}-[0-9a-z-]{1,40}$ ]] || { echo "Bad release id: $ID" >&2; exit 2; }
+BASE=/srv/xposure
+TGZ="$BASE/incoming/$ID.tgz"
+DIR="$BASE/releases/$ID"
+[ -f "$TGZ" ] || { echo "Upload not found: $TGZ" >&2; exit 2; }
+
+echo "• Unpacking $ID"
+rm -rf "$DIR"
+mkdir -p "$DIR"
+tar -xzf "$TGZ" -C "$DIR" --no-same-owner --warning=no-unknown-keyword
+rm -f "$TGZ"
+chmod -R u=rwX,go=rX "$DIR"
+
+CURRENT="$(readlink -e "$BASE/current" 2>/dev/null || true)"
+if [ -n "$CURRENT" ] && [ -d "$CURRENT/node_modules" ] && cmp -s "$CURRENT/package-lock.json" "$DIR/package-lock.json"; then
+  echo "• Dependencies unchanged: reusing them"
+  cp -al "$CURRENT/node_modules" "$DIR/node_modules"
+else
+  echo "• Installing dependencies"
+  (cd "$DIR" && npm ci --omit=dev --ignore-scripts --no-audit --no-fund --no-update-notifier --loglevel=error)
+fi
+
+sudo -n /usr/local/sbin/xposure-activate "$ID"

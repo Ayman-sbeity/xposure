@@ -47,7 +47,32 @@ npm start          # http://localhost:3000 (set PORT to change)
 
 ### Deploying
 
-Any host that runs Node.js with a persistent disk works (a VPS, Render, Railway, Fly.io, a cPanel Node app…). Run `npm ci && npm run build`, then `npm start` behind HTTPS, and set at least `PUBLIC_ORIGIN`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (first start only) and, for the approved launch, `VITE_SITE_INDEXABLE=true` (see `.env.example`). Keep `data/` on the persistent disk and back it up. Forgotten password: `npm run admin -- password you@example.com NewPassword123`.
+The site runs on a DigitalOcean droplet (Ubuntu 24.04). Settings are in `deploy/deploy.config.json`; the SSH key is `~/.ssh/xposure_deploy`.
+
+| Command | What it does |
+| --- | --- |
+| `npm run deploy` | Builds, runs the tests, uploads the new version, backs up the database, switches the live site and checks it answers. If the new version does not start, the server puts the previous one back by itself. Add `-- --skip-tests` to skip the tests. |
+| `npm run deploy:rollback` | Goes back to the previous version (run it again to return). |
+| `npm run deploy:status` | What is live, memory, disk and the latest backups. |
+| `npm run deploy:logs` | The site's recent log lines. |
+| `npm run deploy:backup` | Downloads the newest database backup to `backups/`. |
+| `npm run deploy:setup` | Prepares a new server, or re-applies the settings below and installs updates. Safe to run again: never touches the data. |
+
+How the server is set up (`deploy/server/`):
+
+- **Caddy** serves the site over HTTPS with automatic certificates and redirects HTTP. The app listens only on `127.0.0.1:3000`.
+- **Accounts:** `xposure` runs the site and can write only `/var/lib/xposure` (database and uploads), inside a systemd sandbox. `deploy` uploads releases and may run only `xposure-activate` as root.
+- **Releases** live in `/srv/xposure/releases/<date>-<commit>`, and `/srv/xposure/current` points to the live one. The switch is atomic, and the 5 newest releases are kept.
+- **Settings and secrets** are in `/etc/xposure/xposure.env` (Zoom keys go here; then `sudo systemctl restart xposure` as root). The first admin's password is in your local `data/PRODUCTION-ADMIN.txt` and is removed from the server once the account exists.
+- **Backups:** the database and photos are saved every night and before every deploy in `/var/backups/xposure`, keeping 14 copies. They are on the same server, so also run `npm run deploy:backup` now and then, or turn on DigitalOcean backups.
+- **Security:** firewall (SSH, 80, 443 only), SSH keys only, automatic security updates (restart at 01:30 UTC if needed), 1 GB swap, logs capped at 200 MB.
+
+**Going live on xposurelb.com:**
+1. In `deploy/deploy.config.json`, set `"domain": "xposurelb.com"`, `"redirectDomains": ["www.xposurelb.com"]` and `"indexable": true`.
+2. Point the DNS A records for `xposurelb.com` and `www` to the droplet's IP.
+3. Run `npm run deploy:setup`, then `npm run deploy`.
+
+Forgotten admin password: as root on the server, `cd /srv/xposure/current && sudo -u xposure env $(cat /etc/xposure/xposure.env | grep -v '^#' | xargs) node server/src/cli.ts password you@example.com NewPassword123`.
 
 ## Pages
 
